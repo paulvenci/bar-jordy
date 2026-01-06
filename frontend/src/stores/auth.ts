@@ -264,6 +264,12 @@ export const useAuthStore = defineStore('auth', {
             console.log('Auth state changed:', event)
 
             if (event === 'SIGNED_IN' && session) {
+              // Guard: Si ya tenemos el usuario y es el mismo, no hacer nada
+              if (this.user?.id === session.user.id && this.usuario) {
+                console.log('⏸️ Auth: Usuario ya autenticado, ignorando evento SIGNED_IN duplicado')
+                return
+              }
+
               this.session = session
               this.user = session.user
               await this.fetchUsuario()

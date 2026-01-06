@@ -7,6 +7,7 @@ interface ProductosState {
     categorias: Categoria[]
     loading: boolean
     error: string | null
+    lastFetchTime: number
 }
 
 export const useProductosStore = defineStore('productos', {
@@ -14,7 +15,8 @@ export const useProductosStore = defineStore('productos', {
         productos: [],
         categorias: [],
         loading: false,
-        error: null
+        error: null,
+        lastFetchTime: 0
     }),
 
     getters: {
@@ -35,6 +37,20 @@ export const useProductosStore = defineStore('productos', {
 
     actions: {
         async fetchProductos() {
+            // Guard 1: Prevenir llamadas concurrentes
+            if (this.loading) {
+                console.log('⏸️ fetchProductos bloqueado: ya está cargando')
+                return
+            }
+
+            // Guard 2: Debounce temporal - no cargar si se cargó hace menos de 5 segundos
+            const now = Date.now()
+            const timeSinceLastFetch = now - this.lastFetchTime
+            if (timeSinceLastFetch < 5000 && this.productos.length > 0) {
+                console.log(`⏸️ fetchProductos: Datos recientes (${Math.round(timeSinceLastFetch / 1000)}s), usando caché`)
+                return
+            }
+
             this.loading = true
             this.error = null
             try {
@@ -62,20 +78,23 @@ export const useProductosStore = defineStore('productos', {
                     .order('nombre')
 
                 if (error) throw error
-                
+
                 console.log(`✅ fetchProductos: Recibidos ${data?.length || 0} productos de BD`)
                 if (data && data.length > 0) {
                     console.log(`📊 Ejemplo - Primer producto: ${data[0].nombre}, stock: ${data[0].stock_actual}`)
                 }
-                
+
                 this.productos = data || []
 
                 // Save to Storage
                 localStorage.setItem('cached_productos', JSON.stringify(this.productos))
                 console.log('💾 fetchProductos: Productos guardados en localStorage')
 
+                // Actualizar timestamp de última carga
+                this.lastFetchTime = Date.now()
+
             } catch (err: any) {
-                console.error('Error al cargar productos (Network):', err)
+                console.error('❌ Error al cargar productos:', err)
                 // Fallback to Storage
                 const cached = localStorage.getItem('cached_productos')
                 if (cached) {
@@ -86,6 +105,7 @@ export const useProductosStore = defineStore('productos', {
                 }
             } finally {
                 this.loading = false
+                console.log('✅ fetchProductos finalizado')
             }
         },
 
@@ -241,7 +261,7 @@ export const useProductosStore = defineStore('productos', {
                     return
                 }
                 console.log(`📦 Producto anterior: ${producto.nombre}, stock: ${producto.stock_actual}`)
-                
+
                 // Crear un nuevo array para forzar reactividad total
                 this.productos = this.productos.map((p, i) => {
                     if (i === index) {
@@ -252,7 +272,7 @@ export const useProductosStore = defineStore('productos', {
                     }
                     return p
                 })
-                
+
                 const productoActualizado = this.productos[index]
                 if (productoActualizado) {
                     console.log(`✅ Producto actualizado: ${productoActualizado.nombre}, nuevo stock: ${productoActualizado.stock_actual}`)

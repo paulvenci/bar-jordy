@@ -12,6 +12,11 @@
           🍺 {{ nombreNegocio }}
         </h1>
 
+        <!-- Version Badge -->
+        <div class="hidden sm:flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono text-gray-600 dark:text-gray-400">
+          v{{ appVersion }}
+        </div>
+
         <!-- Offline Indicator Mobile Friendly -->
          <div class="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold transition-colors"
              :class="offlineStore.isOnline ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'"
@@ -88,6 +93,7 @@ import { useUIStore } from '@/stores/ui'
 import { useOfflineStore } from '@/stores/offline'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
+import packageJson from '../../../package.json'
 
 const router = useRouter()
 const configStore = useConfiguracionStore()
@@ -96,6 +102,7 @@ const offlineStore = useOfflineStore()
 const authStore = useAuthStore()
 const { nombreNegocio } = storeToRefs(configStore)
 
+const appVersion = ref(packageJson.version)
 const isDark = ref(false)
 
 const toggleDarkMode = () => {

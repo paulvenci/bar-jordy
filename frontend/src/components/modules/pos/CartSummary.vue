@@ -46,8 +46,8 @@
                 <p v-if="item.descripcion" class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mb-1">
                     {{ item.descripcion }}
                 </p>
-                <p class="text-sm text-primary-600 dark:text-primary-400 font-bold">
-                    ${{ formatNumber(item.precioUnitario) }}
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                    ${{ formatNumber(item.precioUnitario) }} c/u
                 </p>
             </div>
 
@@ -61,8 +61,9 @@
         </div>
 
         <!-- Controls Row -->
-        <div class="flex items-center justify-between pl-19"> <!-- pl-19 to align with text starts roughly -->
-             <!-- Quantity Controls -->
+        <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-center">
+                <!-- Quantity Controls -->
             <div class="flex items-center bg-white dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-600 shadow-sm">
                 <button 
                 @click="$emit('update-quantity', item.productoId, item.cantidad - 1)"
@@ -78,10 +79,12 @@
                 +
                 </button>
             </div>
+            </div>
 
-             <!-- Subtotal Item -->
-            <div>
-                <p class="text-base font-bold text-gray-900 dark:text-white">
+            <!-- Subtotal - Own line -->
+            <div class="flex items-center justify-between px-1 pt-1 border-t border-gray-200 dark:border-gray-600">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Subtotal:</span>
+                <p class="text-lg font-bold text-gray-900 dark:text-white">
                 ${{ formatNumber(item.precioUnitario * item.cantidad) }}
                 </p>
             </div>

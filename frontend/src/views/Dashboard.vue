@@ -191,11 +191,25 @@ const totalRecaudado = computed(() => ventasStore.totalRecaudadoHoy)
 
 onMounted(async () => {
   loading.value = true
-  await Promise.all([
-    productosStore.fetchProductos(),
-    productosStore.fetchCategorias(),
-    ventasStore.fetchVentasHoy()
-  ])
-  loading.value = false
+  try {
+    // Solo cargar si no hay datos (primera carga)
+    const promises = []
+    
+    if (productosStore.productos.length === 0) {
+      promises.push(productosStore.fetchProductos())
+    }
+    if (productosStore.categorias.length === 0) {
+      promises.push(productosStore.fetchCategorias())
+    }
+    // Ventas del día siempre se actualiza
+    promises.push(ventasStore.fetchVentasHoy())
+    
+    await Promise.all(promises)
+  } catch (error) {
+    console.error('Error loading dashboard data:', error)
+    // Aún si hay error, mostramos el dashboard con los datos que tengamos
+  } finally {
+    loading.value = false
+  }
 })
 </script>

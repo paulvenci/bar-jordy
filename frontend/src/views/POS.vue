@@ -2,7 +2,7 @@
   <AppLayout>
     <div class="h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-4 max-w-7xl mx-auto overflow-hidden">
       <!-- Left Panel: Products -->
-      <div class="flex-1 min-w-0 h-full">
+      <div class="flex-1 min-w-0 h-1/2 md:h-full overflow-auto">
          <ProductGrid 
             :products="productos"
             :categories="categorias"
@@ -12,7 +12,7 @@
       </div>
 
       <!-- Right Panel: Cart -->
-      <div class="w-full md:w-96 h-full flex-shrink-0 flex flex-col">
+      <div class="w-full md:w-96 h-1/2 md:h-full flex-shrink-0 flex flex-col">
           <!-- Table Header -->
           <div v-if="posStore.activeTableId" class="bg-blue-50 border-b border-blue-100 p-3 flex justify-between items-center shrink-0">
              <div class="flex items-center gap-2">

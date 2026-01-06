@@ -10,6 +10,7 @@ interface AuthState {
   permisos: Permiso[]
   loading: boolean
   error: string | null
+  authListenerInitialized: boolean // Flag para evitar múltiples listeners
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -19,7 +20,8 @@ export const useAuthStore = defineStore('auth', {
     usuario: null,
     permisos: [],
     loading: false,
-    error: null
+    error: null,
+    authListenerInitialized: false
   }),
 
   getters: {
@@ -256,22 +258,26 @@ export const useAuthStore = defineStore('auth', {
           await this.fetchPermisos()
         }
 
-        // Escuchar cambios de autenticación
-        supabase.auth.onAuthStateChange(async (event, session) => {
-          console.log('Auth state changed:', event)
+        // Escuchar cambios de autenticación (solo registrar UNA VEZ)
+        if (!this.authListenerInitialized) {
+          supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log('Auth state changed:', event)
 
-          if (event === 'SIGNED_IN' && session) {
-            this.session = session
-            this.user = session.user
-            await this.fetchUsuario()
-            await this.fetchPermisos()
-          } else if (event === 'SIGNED_OUT') {
-            this.user = null
-            this.session = null
-            this.usuario = null
-            this.permisos = []
-          }
-        })
+            if (event === 'SIGNED_IN' && session) {
+              this.session = session
+              this.user = session.user
+              await this.fetchUsuario()
+              await this.fetchPermisos()
+            } else if (event === 'SIGNED_OUT') {
+              this.user = null
+              this.session = null
+              this.usuario = null
+              this.permisos = []
+            }
+          })
+          this.authListenerInitialized = true
+          console.log('✅ Auth listener initialized')
+        }
       } catch (err) {
         console.error('Error initializing auth:', err)
       } finally {

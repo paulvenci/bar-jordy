@@ -28,25 +28,19 @@
             {{ offlineStore.isOnline ? 'ONLINE' : 'OFFLINE' }}
          </div>
 
-         <!-- Barcode Scanner Toggle Switch -->
-         <div class="flex items-center gap-2">
-           <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+         <!-- Barcode Scanner Pill Button -->
+         <button
+           @click="toggleBarcodeScanner"
+           class="flex items-center gap-2 px-3 py-1.5 rounded-full font-medium text-sm transition-all border-2"
+           :class="barcodeScannerActive 
+             ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700 hover:border-blue-700' 
+             : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'"
+         >
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
            </svg>
-           <button
-             @click="toggleBarcodeScanner"
-             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-             :class="barcodeScannerActive ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'"
-             role="switch"
-             :aria-checked="barcodeScannerActive"
-             title="Toggle barcode scanner"
-           >
-             <span
-               class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-               :class="barcodeScannerActive ? 'translate-x-6' : 'translate-x-1'"
-             ></span>
-           </button>
-         </div>
+           <span>Pistola</span>
+         </button>
       </div>
       
       <div class="flex items-center gap-4">

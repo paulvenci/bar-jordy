@@ -129,7 +129,7 @@
 
       <!-- Footer -->
       <div class="mt-6 text-center text-sm text-gray-500">
-        <p>Sistema de Punto de Venta v1.0</p>
+        <p>Sistema de Punto de Venta v{{ appVersion }}</p>
       </div>
     </div>
   </div>
@@ -139,9 +139,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import packageJson from '../../package.json'
 
 const router = useRouter()
 const authStore = useAuthStore()
+
+const appVersion = packageJson.version
 
 // Estado
 const loginMode = ref<'email' | 'pin'>('email')

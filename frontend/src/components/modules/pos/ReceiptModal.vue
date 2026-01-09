@@ -29,56 +29,56 @@
 
               <!-- Items -->
               <div class="mb-4">
-                  <table class="w-full text-xs">
+                  <table class="w-full text-sm">
                       <thead>
-                          <tr class="border-b border-black border-dashed">
-                              <th class="text-left py-1">Cant</th>
-                              <th class="text-left py-1">Desc</th>
-                              <th class="text-right py-1">Total</th>
+                          <tr class="border-b-2 border-black">
+                              <th class="text-left py-2 font-bold">Cant</th>
+                              <th class="text-left py-2 font-bold">Descripción</th>
+                              <th class="text-right py-2 font-bold">Total</th>
                           </tr>
                       </thead>
                       <tbody>
-                          <tr v-for="item in transactionData.items" :key="item.id">
-                              <td class="py-1 w-8 align-top">{{ item.cantidad }}</td>
-                              <td class="py-1 align-top">
-                                  {{ item.nombre_producto }}
+                          <tr v-for="item in transactionData.items" :key="item.id" class="border-b border-gray-300">
+                              <td class="py-2 w-12 align-top font-bold text-base">{{ item.cantidad }}x</td>
+                              <td class="py-2 align-top">
+                                  <div class="font-medium">{{ item.nombre_producto }}</div>
                               </td>
-                              <td class="py-1 text-right align-top">${{ formatNumber(item.subtotal) }}</td>
+                              <td class="py-2 text-right align-top font-semibold">${{ formatNumber(item.subtotal) }}</td>
                           </tr>
                       </tbody>
                   </table>
               </div>
 
-              <hr class="border-black border-dashed my-2 border-t-2" />
+              <hr class="border-black border-dashed my-3 border-t-2" />
 
               <!-- Totals -->
-              <div class="flex flex-col gap-1 text-xs">
+              <div class="flex flex-col gap-2 text-sm">
                   <div class="flex justify-between">
                       <span>Subtotal:</span>
-                      <span>${{ formatNumber(transactionData.subtotal) }}</span>
+                      <span class="font-medium">${{ formatNumber(transactionData.subtotal) }}</span>
                   </div>
                   <div class="flex justify-between">
                       <span>IVA (19%):</span>
-                      <span>${{ formatNumber(transactionData.iva) }}</span>
+                      <span class="font-medium">${{ formatNumber(transactionData.iva) }}</span>
                   </div>
-                  <div v-if="transactionData.descuento > 0" class="flex justify-between text-black font-bold">
+                  <div v-if="transactionData.descuento > 0" class="flex justify-between font-bold">
                        <span>Descuento:</span>
                        <span>-${{ formatNumber(transactionData.descuento) }}</span>
                   </div>
-                  <div class="flex justify-between font-bold text-base mt-1">
+                  <div class="flex justify-between font-extrabold text-xl mt-2 pt-2 border-t-2 border-black">
                       <span>TOTAL:</span>
                       <span>${{ formatNumber(transactionData.total) }}</span>
                   </div>
               </div>
 
-              <hr class="border-black border-dashed my-2 border-t-2" />
+              <hr class="border-black border-dashed my-3 border-t-2" />
 
               <!-- Footer -->
                <div class="text-center text-xs space-y-1">
-                  <p>Pago: {{ transactionData.metodo_pago }}</p>
+                  <p class="font-semibold">Método de Pago: {{ transactionData.metodo_pago }}</p>
                   <p v-if="transactionData.cliente_nombre">Cliente: {{ transactionData.cliente_nombre }}</p>
                   <br />
-                  <p class="whitespace-pre-line">{{ configStore.ticketMensajePie }}</p>
+                  <p class="whitespace-pre-line text-sm">{{ configStore.ticketMensajePie }}</p>
                </div>
           </div>
 
@@ -160,10 +160,11 @@ const printReceipt = () => {
                 <style>
                     body {
                         font-family: 'Courier New', Courier, monospace;
-                        font-size: 12px;
+                        font-size: 14px;
+                        line-height: 1.4;
                         margin: 0;
                         padding: 0;
-                        width: ${ticketWidth}; /* Dynamic width from config */
+                        width: ${ticketWidth};
                         color: #000;
                     }
                     .text-center { text-align: center; }
@@ -171,28 +172,41 @@ const printReceipt = () => {
                     .text-left { text-align: left; }
                     .mb-1 { margin-bottom: 4px; }
                     .mb-2 { margin-bottom: 8px; }
-                    .mb-4 { margin-bottom: 16px; }
+                    .mb-3 { margin-bottom: 12px; }
+                    .mb-4 { margin-bottom: 20px; }
                     .mt-1 { margin-top: 4px; }
+                    .mt-2 { margin-top: 8px; }
+                    .my-2 { margin-top: 8px; margin-bottom: 8px; }
+                    .my-3 { margin-top: 12px; margin-bottom: 12px; }
+                    .pt-2 { padding-top: 8px; }
+                    .py-2 { padding-top: 6px; padding-bottom: 6px; }
                     .font-bold { font-weight: bold; }
-                    .text-xl { font-size: 16px; }
-                    .text-xs { font-size: 10px; }
-                    .text-sm { font-size: 12px; }
-                    .text-base { font-size: 14px; }
+                    .font-semibold { font-weight: 600; }
+                    .font-medium { font-weight: 500; }
+                    .font-extrabold { font-weight: 900; }
+                    .text-2xl { font-size: 22px; font-weight: bold; }
+                    .text-xl { font-size: 20px; font-weight: bold; }
+                    .text-lg { font-size: 18px; }
+                    .text-base { font-size: 16px; }
+                    .text-sm { font-size: 13px; }
+                    .text-xs { font-size: 11px; }
                     .uppercase { text-transform: uppercase; }
                     .flex { display: flex; }
                     .flex-col { flex-direction: column; }
                     .justify-between { justify-content: space-between; }
                     .gap-1 { gap: 4px; }
+                    .gap-2 { gap: 8px; }
+                    .w-12 { width: 48px; }
                     
                     table { width: 100%; border-collapse: collapse; }
-                    td, th { vertical-align: top; padding: 2px 0; }
+                    td, th { vertical-align: top; padding: 4px 0; }
                     
-                    /* Utility for borders simulation */
-                    .border-b { border-bottom: 1px dashed #000; }
-                    .border-t-2 { border-top: 1px dashed #000; }
-                    hr.border-dashed { border: none; border-top: 1px dashed #000; margin: 8px 0; }
+                    .border-b { border-bottom: 1px solid #ccc; }
+                    .border-b-2 { border-bottom: 2px solid #000; }
+                    .border-t-2 { border-top: 2px dashed #000; }
+                    hr.border-dashed { border: none; border-top: 2px dashed #000; margin: 12px 0; }
                     
-                    /* Ensure visibility */
+                    .space-y-1 > * + * { margin-top: 4px; }
                     .visible { visibility: visible !important; }
                 </style>
             </head>

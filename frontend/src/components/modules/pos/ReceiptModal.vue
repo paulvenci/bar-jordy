@@ -223,19 +223,14 @@ const printReceipt = () => {
             } catch (e) {
                 console.error("Print error", e);
             } finally {
-                // remove iframe after print dialog closes (approximate)
-                // In many browsers print() blocks, so this runs after close.
-                // But to be safe, we can set a timeout or just leave it until next reload (it's hidden/empty)
+                // Remove iframe after print dialog closes
                 setTimeout(() => {
-                   document.body.removeChild(iframe);
+                   if (document.body.contains(iframe)) {
+                       document.body.removeChild(iframe);
+                   }
                 }, 1000);
             }
         };
-       
-        // Fallback if onload doesn't fire immediately (sometimes cached)
-        if (iframe.contentWindow && iframe.contentDocument?.readyState === 'complete') {
-             iframe.onload(new Event('load'));
-        }
     }
 }
 </script>

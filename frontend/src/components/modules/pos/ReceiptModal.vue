@@ -20,12 +20,9 @@
                   <p class="text-xs">Direccion del Local 123</p>
                   <p class="text-xs mb-2">Tel: +56 9 1234 5678</p>
                   
-                  <hr class="border-black border-dashed my-2 border-t-2" />
+                  <hr class="border-black border-dashed my-3 border-t-2" />
                   
-                  <div class="flex justify-between text-xs">
-                      <span>Folio: #{{ transactionData.numero || '---' }}</span>
-                      <span>{{ formatDate(transactionData.fecha) }}</span>
-                  </div>
+                  <p class="text-sm font-semibold">{{ formatDate(transactionData.fecha) }}</p>
               </div>
 
               <!-- Items -->

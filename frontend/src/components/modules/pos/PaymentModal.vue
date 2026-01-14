@@ -169,7 +169,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useBarcodeScanner } from '@/composables/useBarcodeScanner'
+
+const { pause, resume } = useBarcodeScanner()
+
+// Pausar escáner al abrir modal de pago
+onMounted(() => {
+  pause()
+})
+
+// Reanudar escáner al cerrar modal
+onUnmounted(() => {
+  resume()
+})
 
 const props = defineProps<{
   total: number

@@ -2,7 +2,7 @@
   <AppLayout>
     <!-- Barcode Scanner Component (invisible) -->
     <BarcodeScanner
-      :active="barcodeModeActive"
+      :active="barcodeEffectivelyActive"
       :products="productos"
       @product-found="handleProductScanned"
       @product-not-found="handleBarcodeError"
@@ -112,7 +112,7 @@ const showReceiptModal = ref<any>(null)
 const lastTransaction = ref<any>(null)
 
 // Barcode Scanner State (shared composable)
-const { isActive: barcodeModeActive } = useBarcodeScanner()
+const { isEffectivelyActive: barcodeEffectivelyActive } = useBarcodeScanner()
 
 onMounted(() => {
   productosStore.fetchProductos()

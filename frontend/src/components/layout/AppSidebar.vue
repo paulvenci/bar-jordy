@@ -8,6 +8,7 @@
         <li v-for="item in menuItems" :key="item.path">
           <router-link
             :to="item.path"
+            @click="handleNavClick(item)"
             class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors overflow-hidden whitespace-nowrap"
             :class="[
               isActive(item.path) 
@@ -45,9 +46,11 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { useUIStore } from '@/stores/ui'
+import { usePOSStore } from '@/stores/pos'
 
 const route = useRoute()
 const uiStore = useUIStore()
+const posStore = usePOSStore()
 
 const menuItems = [
   { path: '/', label: 'Dashboard', icon: '📊' },
@@ -65,4 +68,13 @@ const isActive = (path: string) => {
   }
   return route.path.startsWith(path)
 }
+
+// Limpiar contexto de mesa y carrito al navegar a Caja Rápida desde el menú
+const handleNavClick = (item: { path: string }) => {
+  if (item.path === '/pos') {
+    posStore.setActiveTable(null, null)
+    posStore.clearCart()
+  }
+}
+
 </script>

@@ -1,7 +1,8 @@
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 // Estado reactivo compartido globalmente
 const isActive = ref(false)
+const isPaused = ref(false)
 
 // Cargar estado inicial desde localStorage
 const savedState = localStorage.getItem('barcodeScannerActive')
@@ -19,8 +20,23 @@ export function useBarcodeScanner() {
         isActive.value = !isActive.value
     }
 
+    const pause = () => {
+        isPaused.value = true
+    }
+
+    const resume = () => {
+        isPaused.value = false
+    }
+
+    // Estado efectivo: activo y no pausado
+    const isEffectivelyActive = computed(() => isActive.value && !isPaused.value)
+
     return {
         isActive,
-        toggle
+        isPaused,
+        isEffectivelyActive,
+        toggle,
+        pause,
+        resume
     }
 }

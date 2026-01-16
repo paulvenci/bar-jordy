@@ -41,8 +41,15 @@ export const useVentasStore = defineStore('ventas', {
             this.loading = true
             try {
                 const now = new Date()
-                const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
-                const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+                // Usar formato local YYYY-MM-DD para evitar problemas de zona horaria
+                const year = now.getFullYear()
+                const month = String(now.getMonth() + 1).padStart(2, '0')
+                const day = String(now.getDate()).padStart(2, '0')
+                const todayStr = `${year}-${month}-${day}`
+
+                // Crear rangos de fecha usando formato local (sin Z al final)
+                const startOfDay = `${todayStr}T00:00:00`
+                const endOfDay = `${todayStr}T23:59:59`
 
                 const { data, error } = await supabase
                     .from('ventas')
@@ -50,8 +57,8 @@ export const useVentasStore = defineStore('ventas', {
             *,
             items:items_venta(*)
           `)
-                    .gte('fecha', startOfDay.toISOString())
-                    .lte('fecha', endOfDay.toISOString())
+                    .gte('fecha', startOfDay)
+                    .lte('fecha', endOfDay)
                     .eq('estado', 'COMPLETADA')
 
                 if (error) throw error

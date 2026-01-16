@@ -3,13 +3,24 @@
     <!-- Header: Search & Filter -->
     <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
       <div class="flex gap-2 mb-3">
-        <input 
-          v-model="searchQuery"
-          type="text" 
-          placeholder="Buscar producto (nombre o código)..." 
-          class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2 border"
-          autofocus
-        />
+        <div class="relative flex-1">
+          <input 
+            v-model="searchQuery"
+            type="text" 
+            placeholder="Buscar producto (nombre o código)..." 
+            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2 pr-10 border"
+            autofocus
+          />
+          <button 
+            v-if="searchQuery"
+            @click="searchQuery = ''"
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1"
+            type="button"
+            title="Limpiar búsqueda"
+          >
+            ✕
+          </button>
+        </div>
       </div>
       
       <!-- Category Chips -->

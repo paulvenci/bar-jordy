@@ -6,6 +6,7 @@ interface ConfigState {
     stockMinimoDefault: number
     moneda: string
     nombreNegocio: string
+    logoUrl: string
     diasSinRotacion: number
     ticketAncho: '80mm' | '58mm'
     ticketMensajePie: string
@@ -18,6 +19,7 @@ export const useConfiguracionStore = defineStore('configuracion', {
         stockMinimoDefault: 5,
         moneda: 'CLP',
         nombreNegocio: 'Bar Gordy',
+        logoUrl: '',
         diasSinRotacion: 30,
         ticketAncho: '80mm',
         ticketMensajePie: '¡Gracias por su preferencia!',
@@ -48,6 +50,9 @@ export const useConfiguracionStore = defineStore('configuracion', {
                             break
                         case 'nombre_negocio':
                             this.nombreNegocio = config.valor
+                            break
+                        case 'logo_url':
+                            this.logoUrl = config.valor || ''
                             break
                         case 'dias_sin_rotacion':
                             this.diasSinRotacion = Number(config.valor)
@@ -86,6 +91,12 @@ export const useConfiguracionStore = defineStore('configuracion', {
                 if (updates.nombreNegocio !== undefined) {
                     promises.push(
                         supabase.from('configuracion').update({ valor: updates.nombreNegocio }).eq('clave', 'nombre_negocio')
+                    )
+                }
+
+                if (updates.logoUrl !== undefined) {
+                    promises.push(
+                        supabase.from('configuracion').upsert({ clave: 'logo_url', valor: updates.logoUrl }, { onConflict: 'clave' })
                     )
                 }
 

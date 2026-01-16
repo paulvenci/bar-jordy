@@ -21,15 +21,20 @@
 
       <!-- Right Panel: Cart -->
       <div class="w-full md:w-96 h-1/2 md:h-full flex-shrink-0 flex flex-col">
-          <!-- Table Header -->
-          <div v-if="posStore.activeTableId" class="bg-blue-50 border-b border-blue-100 p-3 flex justify-between items-center shrink-0">
-             <div class="flex items-center gap-2">
-                <span class="bg-blue-600 text-white rounded-md px-2 py-1 text-sm font-bold">Mesa {{ posStore.activeTableNumber }}</span>
-                <span class="text-xs text-blue-600" v-if="cart.length > 0">({{ cart.length }} items)</span>
+          <!-- Table/Client Header -->
+          <div v-if="posStore.activeTableId" class="bg-blue-50 border-b border-blue-100 p-3 shrink-0">
+             <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                   <span class="bg-blue-600 text-white rounded-md px-2 py-1 text-sm font-bold">Mesa {{ posStore.activeTableNumber }}</span>
+                   <span v-if="posStore.activeClientName" class="bg-green-100 text-green-700 rounded-md px-2 py-1 text-sm font-medium">
+                     👤 {{ posStore.activeClientName }}
+                   </span>
+                   <span class="text-xs text-blue-600" v-if="cart.length > 0">({{ cart.length }} items)</span>
+                </div>
+                <button @click="router.push('/mesas')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                   Volver
+                </button>
              </div>
-             <button @click="router.push('/mesas')" class="text-sm text-gray-500 hover:text-gray-700 underline">
-                Volver
-             </button>
           </div>
 
          <div class="flex-1 min-h-0 overflow-hidden">

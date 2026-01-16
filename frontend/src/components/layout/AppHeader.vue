@@ -61,7 +61,8 @@
             ⚠ {{ offlineStore.pendingTransactions.length }} Pendientes
         </span>
 
-        <!-- User Info & Logout -->
+        <!-- Turno Indicator -->
+        <TurnoIndicator />
         <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 rounded-lg">
           <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -106,15 +107,18 @@ import { useConfiguracionStore } from '@/stores/configuracion'
 import { useUIStore } from '@/stores/ui'
 import { useOfflineStore } from '@/stores/offline'
 import { useAuthStore } from '@/stores/auth'
+import { useTurnoStore } from '@/stores/turno'
 import { storeToRefs } from 'pinia'
 import packageJson from '../../../package.json'
 import { useBarcodeScanner } from '@/composables/useBarcodeScanner'
+import TurnoIndicator from './TurnoIndicator.vue'
 
 const router = useRouter()
 const configStore = useConfiguracionStore()
 const uiStore = useUIStore()
 const offlineStore = useOfflineStore()
 const authStore = useAuthStore()
+const turnoStore = useTurnoStore()
 const { nombreNegocio } = storeToRefs(configStore)
 
 const appVersion = ref(packageJson.version)
@@ -151,5 +155,8 @@ onMounted(() => {
     isDark.value = true
     document.documentElement.classList.add('dark')
   }
+  
+  // Fetch active shift for current user
+  turnoStore.fetchTurnoActivo()
 })
 </script>

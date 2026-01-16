@@ -130,41 +130,43 @@ export const useAuthStore = defineStore('auth', {
           throw new Error('PIN incorrecto o usuario inactivo')
         }
 
-        // Hacer login con el email del usuario
-        // Nota: Para login con PIN, el usuario debe haber iniciado sesión al menos una vez con email/password
-        // O podemos usar signInWithPassword con el email del usuario
+        // Intentar login con el PIN como password
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
           email: usuario.email,
-          password: pin // Intentar con el PIN como password (esto fallará si no coincide)
+          password: pin
         })
 
-        // Si falla con PIN, intentar obtener la sesión existente
-        if (authError) {
-          // Verificar si hay una sesión activa
-          const { data: { session } } = await supabase.auth.getSession()
-
-          if (!session) {
-            throw new Error('PIN correcto, pero necesitas iniciar sesión primero con email y contraseña para habilitar el acceso rápido con PIN')
-          }
-
-          // Verificar que el usuario de la sesión coincida con el usuario del PIN
-          if (session.user.id !== usuario.id) {
-            throw new Error('PIN correcto, pero pertenece a otro usuario. Por favor cierra sesión e inicia con email y contraseña')
-          }
-
-          this.session = session
-          this.user = session.user
-        } else {
+        if (!authError && authData.session) {
+          // Login exitoso con PIN como password
           this.session = authData.session
           this.user = authData.user
+          this.usuario = usuario as Usuario
+          await this.fetchPermisos()
+          await this.registrarSesion()
+          this.loading = false
+          return { success: true }
         }
 
-        this.usuario = usuario as Usuario
-        await this.fetchPermisos()
-        await this.registrarSesion()
+        // Si falla, verificar si ya hay una sesión activa
+        const { data: { session: existingSession } } = await supabase.auth.getSession()
 
-        this.loading = false
-        return { success: true }
+        if (existingSession) {
+          // Hay sesión activa - verificar si coincide con el usuario del PIN
+          // o simplemente usar el usuario del PIN ya que el PIN es correcto
+          this.session = existingSession
+          this.user = existingSession.user
+
+          // Cargar datos del usuario del PIN (no del usuario de la sesión)
+          this.usuario = usuario as Usuario
+          await this.fetchPermisos()
+
+          this.loading = false
+          return { success: true }
+        }
+
+        // No hay sesión activa y el PIN no funciona como password
+        throw new Error('PIN válido pero necesitas cambiar la contraseña al PIN. Ve a Supabase Dashboard → Authentication → Users → Cambia la contraseña a: ' + pin)
+
       } catch (err: any) {
         this.loading = false
         this.error = err.message

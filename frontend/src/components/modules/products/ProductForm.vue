@@ -138,7 +138,7 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Imagen</label>
               <div class="mt-1 flex items-center gap-4">
                 <div class="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-300 bg-gray-100 flex-shrink-0">
-                  <img v-if="previewImage || form.foto" :src="previewImage || form.foto" class="w-full h-full object-cover" />
+                  <img v-if="previewImage || form.foto" :src="previewImage || form.foto" class="w-full h-full object-cover" @error="handleImageError" />
                   <div v-else class="flex items-center justify-center h-full text-gray-400">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -151,14 +151,34 @@
                   </div>
                 </div>
                 
-                <div class="flex-1">
+                <div class="flex-1 space-y-2">
+                  <!-- Opción 1: Subir archivo -->
                   <input 
                     type="file" 
                     accept="image/*"
                     @change="handleImageUpload"
                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:text-gray-300 dark:file:bg-gray-700 dark:file:text-primary-400"
                   />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">PNG, JPG, max 2MB.</p>
+                  
+                  <!-- Opción 2: URL directa -->
+                  <div class="flex gap-2">
+                    <input 
+                      v-model="imageUrl"
+                      type="text"
+                      placeholder="O pega URL de imagen..."
+                      class="flex-1 text-sm rounded-md border-gray-300 shadow-sm p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      @keyup.enter="applyImageUrl"
+                    />
+                    <button 
+                      type="button"
+                      @click="applyImageUrl"
+                      :disabled="!imageUrl"
+                      class="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500 rounded-md disabled:opacity-50"
+                    >
+                      Usar
+                    </button>
+                  </div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Sube archivo (max 2MB) o pega URL de imagen.</p>
                 </div>
               </div>
             </div>
@@ -288,6 +308,21 @@ const saving = ref(false)
 const uploadingImage = ref(false)
 const previewImage = ref<string | null>(null)
 const error = ref<string | null>(null)
+const imageUrl = ref('')
+
+// Aplicar URL de imagen externa
+const applyImageUrl = () => {
+    if (!imageUrl.value.trim()) return
+    form.value.foto = imageUrl.value.trim()
+    previewImage.value = imageUrl.value.trim()
+    imageUrl.value = ''
+}
+
+// Manejar error de carga de imagen (URL inválida)
+const handleImageError = () => {
+    console.warn('Error cargando imagen, URL inválida')
+    // No limpiamos automáticamente para que el usuario pueda ver qué URL ingresó
+}
 
 interface IngredienteForm {
   producto_simple_id: string

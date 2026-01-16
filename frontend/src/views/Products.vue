@@ -7,10 +7,16 @@
             📦 Gestión de Productos
           </h2>
         </div>
-        <div class="mt-4 flex md:ml-4 md:mt-0">
+        <div class="mt-4 flex md:ml-4 md:mt-0 gap-2">
+          <button
+            @click="showCategoriasModal = true"
+            class="inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-700"
+          >
+            📂 Categorías
+          </button>
           <button
             @click="openCreateModal"
-            class="ml-3 inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            class="inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             <span class="mr-2 text-lg">+</span> Nuevo Producto
           </button>
@@ -79,6 +85,13 @@
         @close="closeModal"
         @save="onSave"
       />
+
+      <!-- Categorias Modal -->
+      <CategoriasModal
+        v-if="showCategoriasModal"
+        @close="showCategoriasModal = false"
+        @update="productosStore.fetchCategorias()"
+      />
     </div>
   </AppLayout>
 </template>
@@ -89,6 +102,7 @@ import { storeToRefs } from 'pinia'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import ProductList from '@/components/modules/products/ProductList.vue'
 import ProductForm from '@/components/modules/products/ProductForm.vue'
+import CategoriasModal from '@/components/modules/products/CategoriasModal.vue'
 import { useProductosStore } from '@/stores/productos'
 import type { Producto } from '@/types/database.types'
 
@@ -102,6 +116,7 @@ const filters = ref({
 })
 
 const showModal = ref(false)
+const showCategoriasModal = ref(false)
 const selectedProduct = ref<Producto | null>(null)
 
 onMounted(() => {

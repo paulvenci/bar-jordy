@@ -71,14 +71,20 @@ serve(async (req) => {
     const { email, password, nombre, rol_id, activo, pin } = await req.json()
 
     // Validate required fields
-    if (!email || !password || !nombre || !rol_id) {
-      throw new Error('Faltan campos requeridos: email, password, nombre, rol_id')
+    if (!email || !nombre || !rol_id) {
+      throw new Error('Faltan campos requeridos: email, nombre, rol_id')
+    }
+
+    // Si hay PIN, usarlo como password; si no, usar password proporcionado
+    const authPassword = pin || password
+    if (!authPassword) {
+      throw new Error('Debe proporcionar password o pin')
     }
 
     // Create user in auth.users
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
-      password,
+      password: authPassword, // Usar PIN o password
       email_confirm: true,
       user_metadata: {
         nombre
@@ -110,8 +116,8 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         data: userData,
         message: 'Usuario creado correctamente'
       }),
@@ -122,9 +128,9 @@ serve(async (req) => {
     )
   } catch (error) {
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message 
+      JSON.stringify({
+        success: false,
+        error: error.message
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

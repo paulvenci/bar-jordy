@@ -35,7 +35,7 @@ const router = createRouter({
             path: '/',
             name: 'dashboard',
             component: Dashboard,
-            meta: { 
+            meta: {
                 title: 'Dashboard',
                 requiresAuth: true
             }
@@ -44,7 +44,7 @@ const router = createRouter({
             path: '/productos',
             name: 'productos',
             component: Products,
-            meta: { 
+            meta: {
                 title: 'Gestión de Productos',
                 requiresAuth: true,
                 requiresPermission: 'productos.ver'
@@ -54,7 +54,7 @@ const router = createRouter({
             path: '/inventario',
             name: 'inventario',
             component: Inventory,
-            meta: { 
+            meta: {
                 title: 'Gestión de Inventario',
                 requiresAuth: true,
                 requiresPermission: 'inventario.ver'
@@ -64,7 +64,7 @@ const router = createRouter({
             path: '/pos',
             name: 'pos',
             component: POS,
-            meta: { 
+            meta: {
                 title: 'Punto de Venta',
                 requiresAuth: true,
                 requiresPermission: 'pos.acceder'
@@ -84,7 +84,7 @@ const router = createRouter({
             path: '/reportes',
             name: 'reportes',
             component: Reports,
-            meta: { 
+            meta: {
                 title: 'Reportes',
                 requiresAuth: true,
                 requiresPermission: 'reportes.ver'
@@ -94,7 +94,7 @@ const router = createRouter({
             path: '/configuracion',
             name: 'configuracion',
             component: Settings,
-            meta: { 
+            meta: {
                 title: 'Configuración',
                 requiresAuth: true,
                 requiresPermission: 'config.ver'
@@ -105,30 +105,33 @@ const router = createRouter({
 
 // Guard de autenticación y permisos
 router.beforeEach(async (to, from, next) => {
-    // Actualizar título
-    document.title = `${to.meta.title as string} | Bar Gordy` || 'Bar Gordy'
-    
     const authStore = useAuthStore()
-    
+
+    // Actualizar título usando el nombre del negocio desde configuración
+    const { useConfiguracionStore } = await import('@/stores/configuracion')
+    const configStore = useConfiguracionStore()
+    const businessName = configStore.nombreNegocio || 'POS System'
+    document.title = to.meta.title ? `${to.meta.title} | ${businessName}` : businessName
+
     // Si va al login y ya está autenticado, redirigir al dashboard
     if (to.path === '/login' && authStore.isAuthenticated) {
         next('/')
         return
     }
-    
+
     // Si la ruta no requiere autenticación, permitir acceso
     if (!to.meta.requiresAuth) {
         next()
         return
     }
-    
+
     // Verificar autenticación
     if (!authStore.isAuthenticated) {
         console.log('⚠️ No autenticado, redirigiendo a login')
         next('/login')
         return
     }
-    
+
     // Verificar permiso específico
     if (to.meta.requiresPermission) {
         const hasPermission = authStore.hasPermission(to.meta.requiresPermission)
@@ -139,7 +142,7 @@ router.beforeEach(async (to, from, next) => {
             return
         }
     }
-    
+
     // Verificar cualquiera de los permisos
     if (to.meta.requiresAnyPermission) {
         const hasAnyPermission = authStore.hasAnyPermission(to.meta.requiresAnyPermission)
@@ -150,7 +153,7 @@ router.beforeEach(async (to, from, next) => {
             return
         }
     }
-    
+
     next()
 })
 

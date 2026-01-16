@@ -3,7 +3,10 @@
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 m-4">
       <!-- Logo -->
       <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-primary-600 mb-2">🍺 Bar Gordy</h1>
+        <div v-if="configStore.logoUrl" class="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden bg-gray-100">
+          <img :src="configStore.logoUrl" class="w-full h-full object-cover" />
+        </div>
+        <h1 class="text-3xl font-bold text-primary-600 mb-2">{{ configStore.nombreNegocio || 'POS System' }}</h1>
         <p class="text-gray-600">Sistema de Punto de Venta</p>
       </div>
 
@@ -139,10 +142,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useConfiguracionStore } from '@/stores/configuracion'
 import packageJson from '../../package.json'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const configStore = useConfiguracionStore()
 
 const appVersion = packageJson.version
 

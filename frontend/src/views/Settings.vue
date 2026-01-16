@@ -36,6 +36,7 @@
                 type="text"
                 class="w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"
               />
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Este nombre aparecerá en el título del navegador.</p>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -48,6 +49,45 @@
                     <option value="CLP">Peso Chileno (CLP)</option>
                     <option value="USD">Dólar (USD)</option>
                 </select>
+            </div>
+          </div>
+          
+          <!-- Logo del Negocio -->
+          <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Logo del Negocio (Favicon)
+            </label>
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                <img v-if="form.logoUrl" :src="form.logoUrl" class="w-full h-full object-cover" @error="form.logoUrl = ''" />
+                <span v-else class="text-2xl">🏪</span>
+              </div>
+              <div class="flex-1 space-y-2">
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  @change="handleLogoUpload"
+                  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
+                />
+                <div class="flex gap-2">
+                  <input 
+                    v-model="logoUrlInput"
+                    type="text"
+                    placeholder="O pega URL de imagen..."
+                    class="flex-1 text-sm rounded-md border-gray-300 shadow-sm p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    @keyup.enter="applyLogoUrl"
+                  />
+                  <button 
+                    type="button"
+                    @click="applyLogoUrl"
+                    :disabled="!logoUrlInput"
+                    class="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500 rounded-md disabled:opacity-50"
+                  >
+                    Usar
+                  </button>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Este logo aparecerá como favicon del navegador.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -299,6 +339,7 @@ const successMessage = ref('')
 
 const form = reactive({
   nombreNegocio: '',
+  logoUrl: '',
   moneda: 'CLP',
   porcentajeIVA: 19,
   stockMinimoDefault: 5,
@@ -307,11 +348,14 @@ const form = reactive({
   ticketMensajePie: ''
 })
 
+const logoUrlInput = ref('')
+
 onMounted(async () => {
     await configStore.fetchConfiguracion()
     await tablesStore.fetchTables()
     // Sync form with store
     form.nombreNegocio = configStore.nombreNegocio
+    form.logoUrl = configStore.logoUrl
     form.moneda = configStore.moneda
     form.porcentajeIVA = configStore.porcentajeIVA
     form.stockMinimoDefault = configStore.stockMinimoDefault
@@ -328,6 +372,7 @@ const saveSettings = async () => {
     
     const success = await configStore.updateConfiguracion({
         nombreNegocio: form.nombreNegocio,
+        logoUrl: form.logoUrl,
         porcentajeIVA: form.porcentajeIVA,
         stockMinimoDefault: form.stockMinimoDefault,
         diasSinRotacion: form.diasSinRotacion,
@@ -341,6 +386,46 @@ const saveSettings = async () => {
     }
     
     saving.value = false
+}
+
+// Logo Management
+const handleLogoUpload = async (event: Event) => {
+    const input = event.target as HTMLInputElement
+    if (!input.files || input.files.length === 0) return
+
+    const file = input.files[0]
+    if (!file) return
+    
+    if (file.size > 2 * 1024 * 1024) {
+        alert('La imagen es muy pesada. Máximo 2MB.')
+        return
+    }
+
+    try {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `logo-${Date.now()}.${fileExt}`
+
+        const { error: uploadError } = await supabase.storage
+            .from('productos')
+            .upload(fileName, file)
+
+        if (uploadError) throw uploadError
+
+        const { data } = supabase.storage
+            .from('productos')
+            .getPublicUrl(fileName)
+
+        form.logoUrl = data.publicUrl
+    } catch (err: any) {
+        console.error('Error uploading logo:', err)
+        alert('Error al subir logo')
+    }
+}
+
+const applyLogoUrl = () => {
+    if (!logoUrlInput.value.trim()) return
+    form.logoUrl = logoUrlInput.value.trim()
+    logoUrlInput.value = ''
 }
 
 // Data Management

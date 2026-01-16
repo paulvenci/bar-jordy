@@ -41,6 +41,14 @@
             @click="handleTableClick(mesa)"
             class="relative group cursor-pointer transition-all duration-300 transform hover:scale-105"
         >
+            <!-- Badge de clientes -->
+            <div 
+                v-if="(clientesPorMesa[mesa.id] ?? 0) > 0" 
+                class="absolute -top-2 -right-2 bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold z-10 shadow-lg"
+            >
+                {{ clientesPorMesa[mesa.id] ?? 0 }}
+            </div>
+            
             <div 
                 class="aspect-square rounded-2xl shadow-md border-4 flex flex-col items-center justify-center p-4"
                 :class="mesa.estado === 'LIBRE' 
@@ -52,7 +60,7 @@
                 <p class="text-gray-500 dark:text-gray-400 text-sm mb-2">Capacidad: {{ mesa.capacidad }}p</p>
                 
                 <div v-if="mesa.estado === 'OCUPADA'" class="mt-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold uppercase tracking-wide">
-                    Ocupada
+                    {{ clientesPorMesa[mesa.id] || 0 }} cliente{{ clientesPorMesa[mesa.id] !== 1 ? 's' : '' }}
                 </div>
                 <div v-else class="mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase tracking-wide">
                     Libre
@@ -61,30 +69,61 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de Clientes -->
+    <ClientesMesaModal
+      v-if="showClientModal && selectedMesa"
+      :mesa-id="selectedMesa.id"
+      :mesa-number="selectedMesa.numero"
+      @close="showClientModal = false"
+      @select="handleClientSelect"
+    />
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import AppLayout from '@/components/layout/AppLayout.vue'
+import ClientesMesaModal from '@/components/modules/pos/ClientesMesaModal.vue'
 import { useTablesStore } from '@/stores/tables'
 import { usePOSStore } from '@/stores/pos'
 import type { Mesa } from '@/types/database.types'
+
+interface ClienteInfo {
+  nombre: string
+  ventaId: string
+  total: number
+  itemCount: number
+}
 
 const router = useRouter()
 const tablesStore = useTablesStore()
 const posStore = usePOSStore()
 const { sortedTables, loading } = storeToRefs(tablesStore)
 
-onMounted(() => {
-    tablesStore.fetchTables()
-    // tablesStore.subscribeToTables() // Si habilitamos realtime
+const showClientModal = ref(false)
+const selectedMesa = ref<Mesa | null>(null)
+const clientesPorMesa = reactive<Record<string, number>>({})
+
+onMounted(async () => {
+    await tablesStore.fetchTables()
+    await loadClientCounts()
 })
 
-const refreshTables = () => {
-    tablesStore.fetchTables()
+const loadClientCounts = async () => {
+    for (const mesa of tablesStore.tables) {
+        if (mesa.estado === 'OCUPADA') {
+            const clientes = await posStore.getClientesMesa(mesa.id)
+            clientesPorMesa[mesa.id] = clientes.length
+        }
+    }
+}
+
+const refreshTables = async () => {
+    await tablesStore.fetchTables()
+    await loadClientCounts()
 }
 
 const getTableIcon = (capacidad: number) => {
@@ -94,18 +133,29 @@ const getTableIcon = (capacidad: number) => {
 }
 
 const handleTableClick = async (mesa: Mesa) => {
-    // Set active table in POS store
-    posStore.setActiveTable(mesa.id, mesa.numero)
+    selectedMesa.value = mesa
+    showClientModal.value = true
+}
+
+const handleClientSelect = async (cliente: ClienteInfo | null, isNew: boolean) => {
+    if (!selectedMesa.value) return
     
-    if (mesa.estado === 'OCUPADA') {
-        const hasOrder = await posStore.loadOrder(mesa.id)
-        if (!hasOrder) {
-            // Error logic or just open empty?
-            console.warn('Mesa marcada ocupada pero sin orden pendiente')
-        }
+    showClientModal.value = false
+    
+    // Configurar mesa y cliente activos
+    posStore.setActiveTable(selectedMesa.value.id, selectedMesa.value.numero, cliente?.nombre || null)
+    
+    if (!isNew && cliente?.ventaId) {
+        // Cliente existente - cargar su pedido
+        posStore.setActiveClient(cliente.nombre, cliente.ventaId)
+        await posStore.loadClientOrder(cliente.ventaId)
+    } else if (isNew && cliente) {
+        // Nuevo cliente - solo establecer nombre
+        posStore.setActiveClient(cliente.nombre, null)
     }
     
-    // Navigate to POS
+    // Navegar al POS
     router.push('/pos')
 }
 </script>
+

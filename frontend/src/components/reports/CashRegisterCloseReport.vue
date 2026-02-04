@@ -349,8 +349,12 @@ const cargarEstadisticasVivo = async () => {
 }
 
 const cargarHoy = () => {
-  const today = new Date().toISOString().split('T')[0]
-  cierreCajaStore.fechaSeleccionada = today || new Date().toLocaleDateString('en-CA')
+  const now = new Date()
+  // Si es antes de las 5 AM, asumimos que es el día operativo anterior
+  if (now.getHours() < 5) {
+    now.setDate(now.getDate() - 1)
+  }
+  cierreCajaStore.fechaSeleccionada = now.toLocaleDateString('en-CA')
   cargarDatos()
 }
 

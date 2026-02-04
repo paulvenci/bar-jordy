@@ -1,0 +1,10 @@
+?column?
+"INSERT INTO categorias (id, nombre, descripcion, created_at) VALUES ('1ca6c84c-ac51-4a01-886d-f7f9be4a591f', 'Bebidas', 'Bebidas sin alcohol', '2025-12-14 13:14:18.838765+00') ON CONFLICT (nombre) DO NOTHING;"
+"INSERT INTO categorias (id, nombre, descripcion, created_at) VALUES ('34c45e06-4ac1-4850-baa0-a2b89825e216', 'Jugos', 'Jugos naturales y artificiales', '2025-12-14 13:14:18.838765+00') ON CONFLICT (nombre) DO NOTHING;"
+"INSERT INTO categorias (id, nombre, descripcion, created_at) VALUES ('f72d89d5-72ca-4220-b1cf-e1566488037e', 'Con Alcohol', 'Bebidas alcohólicas', '2025-12-14 13:14:18.838765+00') ON CONFLICT (nombre) DO NOTHING;"
+"INSERT INTO categorias (id, nombre, descripcion, created_at) VALUES ('9105b0e0-a099-4633-b7fd-c5e83adbdc63', 'Licores', 'Licores y destilados', '2025-12-14 13:14:18.838765+00') ON CONFLICT (nombre) DO NOTHING;"
+"INSERT INTO categorias (id, nombre, descripcion, created_at) VALUES ('22fbc964-c64b-4dbe-bb91-176277d3713b', 'Cervezas', 'Cervezas nacionales e importadas', '2025-12-14 13:14:18.838765+00') ON CONFLICT (nombre) DO NOTHING;"
+"INSERT INTO categorias (id, nombre, descripcion, created_at) VALUES ('d543c397-84f1-4419-bc12-707a208c3d06', 'Whiskey', NULL, '2026-01-16 01:59:21.780307+00') ON CONFLICT (nombre) DO NOTHING;"
+"INSERT INTO categorias (id, nombre, descripcion, created_at) VALUES ('5a22db70-126a-4125-b68d-cdaac67ed6b3', 'Energética', NULL, '2026-01-16 01:59:36.65868+00') ON CONFLICT (nombre) DO NOTHING;"
+"INSERT INTO categorias (id, nombre, descripcion, created_at) VALUES ('3b0de7bd-3b5b-49df-8e7f-8fc40fcca384', 'Sin Alcohol', NULL, '2026-01-16 01:59:55.62259+00') ON CONFLICT (nombre) DO NOTHING;"
+"INSERT INTO categorias (id, nombre, descripcion, created_at) VALUES ('41626388-1b6a-4aa2-9dbf-674f67c25322', 'COMIDA', NULL, '2026-01-16 14:58:32.93725+00') ON CONFLICT (nombre) DO NOTHING;"

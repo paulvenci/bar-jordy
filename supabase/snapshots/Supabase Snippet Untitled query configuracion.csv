@@ -1,0 +1,10 @@
+?column?
+"INSERT INTO configuracion (clave, valor, tipo_dato, descripcion) VALUES ('moneda', 'CLP', 'string', 'Código de moneda') ON CONFLICT (clave) DO NOTHING;"
+"INSERT INTO configuracion (clave, valor, tipo_dato, descripcion) VALUES ('porcentaje_iva', '19', 'number', 'Porcentaje de IVA en Chile') ON CONFLICT (clave) DO NOTHING;"
+"INSERT INTO configuracion (clave, valor, tipo_dato, descripcion) VALUES ('stock_minimo_default', '5', 'number', 'Stock mínimo por defecto para productos') ON CONFLICT (clave) DO NOTHING;"
+"INSERT INTO configuracion (clave, valor, tipo_dato, descripcion) VALUES ('nombre_negocio', 'Bar Jordy', 'string', 'Nombre del negocio') ON CONFLICT (clave) DO NOTHING;"
+"INSERT INTO configuracion (clave, valor, tipo_dato, descripcion) VALUES ('ticket_ancho', '80mm', NULL, NULL) ON CONFLICT (clave) DO NOTHING;"
+"INSERT INTO configuracion (clave, valor, tipo_dato, descripcion) VALUES ('dias_sin_rotacion', '30', 'number', 'Días sin ventas para considerar producto sin rotación') ON CONFLICT (clave) DO NOTHING;"
+"INSERT INTO configuracion (clave, valor, tipo_dato, descripcion) VALUES ('ticket_mensaje_pie', '¡Gracias por su preferencia en Bar Jordy!', NULL, NULL) ON CONFLICT (clave) DO NOTHING;"
+"INSERT INTO configuracion (clave, valor, tipo_dato, descripcion) VALUES ('logo_url', '', NULL, NULL) ON CONFLICT (clave) DO NOTHING;"
+"INSERT INTO configuracion (clave, valor, tipo_dato, descripcion) VALUES ('dias_anulacion_ventas', '7', 'number', 'Número de días hacia atrás permitidos para anular una venta (ej: 7 = se pueden anular ventas de los últimos 7 días)') ON CONFLICT (clave) DO NOTHING;"

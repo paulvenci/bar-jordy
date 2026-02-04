@@ -443,7 +443,7 @@ const fetchData = async (startDate: Date, endDate: Date) => {
       
       const fechaCorta = typeof venta.fecha === 'string' 
         ? (venta.fecha.split('T')[0] as string)
-        : (new Date(venta.fecha).toISOString().split('T')[0] as string)
+        : (new Date(venta.fecha).toLocaleDateString('en-CA') as string)
       
       const existing = dailyMap.get(fechaCorta) || { count: 0, total: 0 }
       dailyMap.set(fechaCorta, {

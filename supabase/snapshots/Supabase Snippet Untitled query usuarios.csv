@@ -1,0 +1,19 @@
+?column?
+"-- Usuario: Usuario Test
+-- IMPORTANTE: Primero crear en auth.users con email: test@bargordy.com
+INSERT INTO usuarios (id, nombre, email, pin, activo, rol_id, turno_actual, created_at, updated_at) VALUES ('30ed34a6-491f-4cb0-89cb-efb1dadfd799', 'Usuario Test', 'test@bargordy.com', '1234', false, '2bad821d-af8d-46a9-a9d9-fff614b382e6', NULL, '2026-01-06 15:49:45.827111+00', '2026-01-16 13:52:08.293522+00');"
+"-- Usuario: VERONICA
+-- IMPORTANTE: Primero crear en auth.users con email: mesero@mail.com
+INSERT INTO usuarios (id, nombre, email, pin, activo, rol_id, turno_actual, created_at, updated_at) VALUES ('c8615ea2-ea21-4e9d-bb3b-b823f63f5841', 'VERONICA', 'mesero@mail.com', '4321', false, 'f2660f6f-52ee-47ea-9254-8ae3a3d3f01c', NULL, '2026-01-16 01:53:20.731666+00', '2026-01-16 13:52:13.093401+00');"
+"-- Usuario: ROXANA
+-- IMPORTANTE: Primero crear en auth.users con email: mesero2@mail.com
+INSERT INTO usuarios (id, nombre, email, pin, activo, rol_id, turno_actual, created_at, updated_at) VALUES ('57e7de4b-e7b6-4680-a67e-295e0ce3487b', 'ROXANA', 'mesero2@mail.com', NULL, false, 'f2660f6f-52ee-47ea-9254-8ae3a3d3f01c', NULL, '2026-01-16 13:33:26.678354+00', '2026-01-16 13:52:16.291574+00');"
+"-- Usuario: VERONICA
+-- IMPORTANTE: Primero crear en auth.users con email: veronica@mail.com
+INSERT INTO usuarios (id, nombre, email, pin, activo, rol_id, turno_actual, created_at, updated_at) VALUES ('242b10dd-47e8-45bb-a1e0-ea8777599c8c', 'VERONICA', 'veronica@mail.com', '4321', true, 'f2660f6f-52ee-47ea-9254-8ae3a3d3f01c', NULL, '2026-01-16 13:52:55.238421+00', '2026-01-16 13:52:55.238421+00');"
+"-- Usuario: Administrador Principal
+-- IMPORTANTE: Primero crear en auth.users con email: admin@bargordy.cl
+INSERT INTO usuarios (id, nombre, email, pin, activo, rol_id, turno_actual, created_at, updated_at) VALUES ('1b2ad68e-01a0-41f2-931e-f8fd08ef442d', 'Administrador Principal', 'admin@bargordy.cl', '8827', true, '6f6590aa-a9c6-4f71-bc95-da9d6bc10434', NULL, '2025-12-16 22:07:09.366788+00', '2026-01-16 23:48:50.309291+00');"
+"-- Usuario: ROXANA
+-- IMPORTANTE: Primero crear en auth.users con email: roxana@mail.com
+INSERT INTO usuarios (id, nombre, email, pin, activo, rol_id, turno_actual, created_at, updated_at) VALUES ('24c9b782-ca19-46cd-837e-60b9d27dd83b', 'ROXANA', 'roxana@mail.com', '9876', true, '9e226452-8898-41de-abcb-23e7c8bbd333', NULL, '2026-01-16 13:53:39.848615+00', '2026-01-19 20:47:09.634506+00');"

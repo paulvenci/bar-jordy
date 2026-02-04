@@ -64,25 +64,40 @@ interface CierreCajaState {
 
 // Helper para obtener fecha operativa (10 AM - 1 AM del día siguiente)
 function getFechaOperativaRange(fecha: string): { inicio: string, fin: string } {
-    // fecha viene como 'YYYY-MM-DD'
-    const baseDate = new Date(fecha + 'T10:00:00')
-    const nextDay = new Date(baseDate)
-    nextDay.setDate(nextDay.getDate() + 1)
-    nextDay.setHours(1, 0, 0, 0)
+    // fecha viene como 'YYYY-MM-DD' en hora local
+    const parts = fecha.split('-').map(Number)
+    const year = parts[0] || new Date().getFullYear()
+    const month = parts[1] || (new Date().getMonth() + 1)
+    const day = parts[2] || new Date().getDate()
+
+    // Crear objeto Date en hora local (10:00:00 del día operativo)
+    const baseDate = new Date(year, month - 1, day, 10, 0, 0)
+
+    // Fin es 1:00 AM del día siguiente (calendario)
+    const endDate = new Date(year, month - 1, day + 1, 1, 0, 0)
 
     return {
         inicio: baseDate.toISOString(),
-        fin: nextDay.toISOString()
+        fin: endDate.toISOString()
     }
 }
 
 export const useCierreCajaStore = defineStore('cierreCaja', {
-    state: (): CierreCajaState => ({
-        turnos: [],
-        fechaSeleccionada: new Date().toISOString().split('T')[0] || new Date().toLocaleDateString('en-CA'),
-        loading: false,
-        error: null
-    }),
+    state: (): CierreCajaState => {
+        const now = new Date()
+        // Si es antes de las 5 AM, asumimos que es el día operativo anterior
+        if (now.getHours() < 5) {
+            now.setDate(now.getDate() - 1)
+        }
+        const todayLocal = now.toLocaleDateString('en-CA') // Formato YYYY-MM-DD
+
+        return {
+            turnos: [],
+            fechaSeleccionada: todayLocal,
+            loading: false,
+            error: null
+        }
+    },
 
     getters: {
         /**

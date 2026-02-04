@@ -1,0 +1,11 @@
+?column?
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('0c71dd1a-ad92-44ca-80fd-807651ba6e57', 7, 6, 'LIBRE', NULL, '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('4a25c3a8-3cfd-4ee4-bd33-4e5d938be260', 10, 8, 'LIBRE', NULL, '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('70f9264f-a252-4533-a21d-acbfe8c59368', 8, 2, 'LIBRE', NULL, '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('0e645d4c-4faf-4e27-91a4-8fcedd475b04', 6, 6, 'LIBRE', NULL, '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('66172d02-2efe-43f1-9f79-4e6242db1f59', 1, 4, 'LIBRE', 'BARRA - VENTA DIRECTA', '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('504ca033-d891-4808-be1d-89114deb63de', 5, 4, 'OCUPADA', NULL, '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('6a29afeb-1f0f-45d0-82a7-62ddd2acc489', 9, 2, 'LIBRE', NULL, '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('e2b775b5-fb77-4dde-891e-1cbe1ed4bd4b', 3, 4, 'LIBRE', NULL, '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('90cfb625-3972-40ae-8537-8b7566355275', 4, 4, 'LIBRE', NULL, '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"
+"INSERT INTO mesas (id, numero, capacidad, estado, descripcion, created_at) VALUES ('4f720e60-e6ae-4f2b-ae9a-a2d7add4d75b', 2, 4, 'LIBRE', NULL, '2025-12-16 13:21:42.995689+00') ON CONFLICT (numero) DO NOTHING;"

@@ -5,7 +5,11 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/bar-jordy/', // GitHub Pages base URL
+  // CAMBIO CLAVE AQUÍ:
+  // Detecta si estamos en Vercel. Si es sí, usa la raíz '/'.
+  // Si no (estás en GitHub o local), mantiene '/bar-jordy/'.
+  base: process.env.VERCEL ? '/' : '/bar-jordy/', 
+  
   plugins: [
     vue(),
     VitePWA({

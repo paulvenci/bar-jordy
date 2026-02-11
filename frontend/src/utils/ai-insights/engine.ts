@@ -375,7 +375,7 @@ export const useAIEngine = () => {
                 months.set(monthKey, mEntry)
 
                 // Day of week
-                const dayName = dayNames[d.getDay()]
+                const dayName = dayNames[d.getDay()]!
                 const dEntry = dayStats.get(dayName)!
                 dEntry.totalRevenue += sale.total
                 dEntry.totalCount++

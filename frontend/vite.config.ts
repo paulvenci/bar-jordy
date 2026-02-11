@@ -7,9 +7,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   // CAMBIO CLAVE AQUÍ:
   // Detecta si estamos en Vercel. Si es sí, usa la raíz '/'.
-  // Si no (estás en GitHub o local), mantiene '/bar-jordy/'.
+  // Si no (estás en GitHub o local), mantiene '/GestorBar/'.
   //base: process.env.VERCEL ? '/' : '/bar-jordy/', 
-  base: process.env.VITE_BASE_PATH || '/bar-jordy/',
+  base: process.env.VITE_BASE_PATH || '/GestorBar/',
   plugins: [
     vue(),
     VitePWA({

@@ -54,7 +54,7 @@ Write-Step "1" "Sincronizando código con versión más reciente..."
 $remotes = git remote
 if ($remotes -notcontains "upstream") {
     Write-Host "   Configurando upstream..." -ForegroundColor Gray
-    git remote add upstream "https://github.com/paulvenci/bar-jordy.git"
+    git remote add upstream "https://github.com/paulvenci/GestorBar.git"
 }
 
 Write-Host "   Obteniendo actualizaciones..." -ForegroundColor Gray

@@ -2,7 +2,7 @@
 
 Sistema web de gestión integral para bar usando **Vue 3 + TypeScript + Supabase**.
 
-**🌐 URL de Producción:** https://paulvenci.github.io/bar-jordy/
+**🌐 URL de Producción:** https://paulvenci.github.io/GestorBar/
 
 ---
 
@@ -67,7 +67,7 @@ Para desplegar la aplicación a **GitHub Pages**, sigue la guía completa en:
 
 👉 **[DEPLOYMENT.md](DEPLOYMENT.md)** - Guía de Despliegue a GitHub Pages
 
-**URL de producción:** https://paulvenci.github.io/bar-jordy/
+**URL de producción:** https://paulvenci.github.io/GestorBar/
 
 ---
 

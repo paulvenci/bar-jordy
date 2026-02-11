@@ -121,7 +121,7 @@ if (-not (Test-Path $ClientesDir)) {
 }
 
 # Clonar repo base
-$baseRepo = "https://github.com/paulvenci/bar-jordy.git"
+$baseRepo = "https://github.com/paulvenci/GestorBar.git"
 
 if (Test-Path $clienteDir) {
     Write-Host "   ⚠️ El directorio $clienteDir ya existe." -ForegroundColor Yellow

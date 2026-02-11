@@ -114,7 +114,7 @@ VALUES (
 
    ```bash
    # Si es para desarrollo local del cliente
-   git clone https://github.com/paulvenci/bar-jordy.git bar-[cliente]
+   git clone https://github.com/paulvenci/GestorBar.git bar-[cliente]
    cd bar-[cliente]
    ```
 
@@ -400,7 +400,7 @@ Cuando mejoras el código (ej: nueva feature):
    ```bash
    # Para cada cliente
    cd ../bar-cliente1
-   git remote add upstream https://github.com/paulvenci/bar-jordy.git
+   git remote add upstream https://github.com/paulvenci/GestorBar.git
    git fetch upstream
    git merge upstream/main
    # Resolver conflictos si hay

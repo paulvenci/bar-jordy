@@ -6,7 +6,7 @@ Esta guía te ayudará a desplegar **Bar Gordy POS** a GitHub Pages usando GitHu
 
 ## 📋 Requisitos Previos
 
-- [x] Repositorio en GitHub: `paulvenci/bar-jordy`
+- [x] Repositorio en GitHub: `paulvenci/GestorBar`
 - [ ] Proyecto Supabase configurado
 - [ ] Variables de entorno de Supabase disponibles
 
@@ -24,13 +24,13 @@ git init
 git add .
 git commit -m "Initial commit: Bar Gordy POS"
 git branch -M main
-git remote add origin https://github.com/paulvenci/bar-jordy.git
+git remote add origin https://github.com/paulvenci/GestorBar.git
 git push -u origin main
 ```
 
 ### 2. Habilitar GitHub Pages
 
-1. Ve a tu repositorio: https://github.com/paulvenci/bar-jordy
+1. Ve a tu repositorio: https://github.com/paulvenci/GestorBar
 2. Click en **Settings** (Configuración)
 3. En el menú lateral, click en **Pages**
 4. En **Source**, selecciona **GitHub Actions**
@@ -86,7 +86,7 @@ Una vez configurado todo lo anterior, el despliegue es automático:
 
 **URL de tu aplicación en producción:**
 ```
-https://paulvenci.github.io/bar-jordy/
+https://paulvenci.github.io/GestorBar/
 ```
 
 ---
@@ -135,11 +135,11 @@ Este comando:
 2. **Authentication > URL Configuration**
 3. En **Site URL**, agrega:
    ```
-   https://paulvenci.github.io/bar-jordy/
+   https://paulvenci.github.io/GestorBar/
    ```
 4. En **Redirect URLs**, agrega (si usas autenticación):
    ```
-   https://paulvenci.github.io/bar-jordy/**
+   https://paulvenci.github.io/GestorBar/**
    ```
 5. Click **Save**
 
@@ -151,7 +151,7 @@ Sin esto, la aplicación no podrá conectarse a Supabase desde producción.
 
 ### Checklist de Verificación
 
-- [ ] El sitio carga en https://paulvenci.github.io/bar-jordy/
+- [ ] El sitio carga en https://paulvenci.github.io/GestorBar/
 - [ ] No hay errores en la consola del navegador (F12 > Console)
 - [ ] Los estilos se aplican correctamente
 - [ ] Las imágenes/assets se cargan
@@ -203,7 +203,7 @@ El workflow de GitHub Actions se ejecutará automáticamente y desplegará la nu
 ### Assets (CSS/JS) no cargan (404)
 
 **Causa:** La ruta base no está configurada correctamente
-**Solución:** Verifica que `vite.config.ts` tiene `base: '/bar-jordy/'`
+**Solución:** Verifica que `vite.config.ts` tiene `base: '/GestorBar/'`
 
 ### El sitio muestra 404
 
@@ -247,7 +247,7 @@ Los siguientes archivos fueron modificados/creados para el despliegue:
    - `git add . && git commit -m "mensaje"`
    - `git push origin main`
    - Esperar ~2-3 minutos
-   - Visitar https://paulvenci.github.io/bar-jordy/
+   - Visitar https://paulvenci.github.io/GestorBar/
 
 ---
 

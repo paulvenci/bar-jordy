@@ -2,7 +2,7 @@
   <AppLayout>
     <div class="max-w-4xl mx-auto">
       <div class="flex items-center justify-between mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 class="text-xl font-bold text-gray-900 dark:text-white">
           Configuración del Sistema
         </h1>
         <button

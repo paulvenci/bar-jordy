@@ -289,9 +289,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { useCierreCajaStore } from '@/stores/cierreCaja'
+import { useConfiguracionStore } from '@/stores/configuracion'
 import { formatCurrency } from '@/utils/formatters'
 
 const cierreCajaStore = useCierreCajaStore()
+const configStore = useConfiguracionStore()
 
 // Estado para estadísticas en vivo de turnos abiertos
 const liveStats = ref<Record<string, {
@@ -394,8 +396,146 @@ const formatDateTime = (dateString: string) => {
   })
 }
 
-const imprimirReporte = () => {
-  window.print()
+const imprimirReporte = async () => {
+  const turnos = cierreCajaStore.turnos
+  const fecha = cierreCajaStore.fechaSeleccionada
+  
+  // Load desglose for all turnos before printing
+  for (const turno of turnos) {
+    if (!turno.ventas_dentro_turno) {
+      const desglose = await cierreCajaStore.fetchVentasDesgloseTurno(
+        turno.id,
+        turno.usuario_id,
+        turno.hora_inicio,
+        turno.hora_fin
+      )
+      Object.assign(turno, desglose)
+    }
+  }
+
+  const W = 42
+  const sep = '='.repeat(W)
+  const dash = '-'.repeat(W)
+  
+  const pad = (left: string, right: string) => {
+    const space = W - left.length - right.length
+    return left + ' '.repeat(Math.max(1, space)) + right
+  }
+  
+  const center = (text: string) => {
+    const space = Math.max(0, W - text.length)
+    return ' '.repeat(Math.floor(space / 2)) + text
+  }
+
+  let lines: string[] = []
+  
+  lines.push(sep)
+  lines.push(center('CIERRE DE CAJA'))
+  lines.push(center('GestorBar'))
+  lines.push(center(configStore.nombreNegocio))
+  lines.push(sep)
+  lines.push(pad('Fecha:', fecha))
+  lines.push(pad('Horario:', '10:00 AM - 01:00 AM (+1)'))
+  lines.push(sep)
+  lines.push(center(`TURNOS (${turnos.length})`))
+  lines.push(dash)
+  
+  for (const turno of turnos) {
+    const stats = (turno.estado === 'ABIERTO' && liveStats.value[turno.id]) 
+      ? liveStats.value[turno.id]! 
+      : turno
+    
+    const nombre = (turno.usuario?.nombre || 'Usuario').substring(0, 20)
+    const inicio = formatTime(turno.hora_inicio)
+    const fin = turno.hora_fin ? formatTime(turno.hora_fin) : 'Abierto'
+    const total = calcularTotalTurno(turno)
+    const estado = turno.estado === 'ABIERTO' ? 'ABT' : 'CRD'
+    
+    lines.push('')
+    lines.push(pad(nombre.toUpperCase(), `[${estado}]`))
+    lines.push(pad('', `${inicio} - ${fin}`))
+    lines.push(dash)
+    lines.push(pad('Efectivo:', formatCurrency(Number(stats.total_efectivo || 0))))
+    lines.push(pad('Tarjeta:', formatCurrency(Number(stats.total_tarjeta || 0))))
+    lines.push(pad('Transferencia:', formatCurrency(Number(stats.total_transferencia || 0))))
+    lines.push(pad('Credito:', formatCurrency(Number(stats.total_credito || 0))))
+    lines.push(dash)
+    lines.push(pad(`${stats.cantidad_ventas || 0} ventas`, formatCurrency(total)))
+
+    // Desglose - siempre mostrar
+    if (turno.ventas_dentro_turno && turno.ventas_dentro_turno.length > 0) {
+      lines.push('')
+      lines.push(center('-- Ventas en Turno --'))
+      for (const v of turno.ventas_dentro_turno) {
+        const info = `#${v.numero} ${formatDateTime(v.fecha)}`
+        lines.push(pad(info.substring(0, 26), formatCurrency(v.total)))
+      }
+      lines.push(dash)
+      lines.push(pad(`${turno.totales_dentro?.cantidad || 0} ventas`, formatCurrency(turno.totales_dentro?.total || 0)))
+    }
+
+    lines.push('')
+    lines.push(center('-- Ventas Fuera Turno --'))
+    if (turno.ventas_fuera_turno && turno.ventas_fuera_turno.length > 0) {
+      for (const v of turno.ventas_fuera_turno) {
+        const info = `#${v.numero} ${formatDateTime(v.fecha)}`
+        lines.push(pad(info.substring(0, 26), formatCurrency(v.total)))
+      }
+      lines.push(dash)
+      lines.push(pad(`${turno.totales_fuera?.cantidad || 0} ventas`, formatCurrency(turno.totales_fuera?.total || 0)))
+    } else {
+      lines.push(center('Sin ventas'))
+    }
+    
+    lines.push(sep)
+  }
+
+  lines.push('')
+  lines.push(center(new Date().toLocaleString('es-CL')))
+  lines.push('')
+  lines.push('')
+  
+  const sw = screen.width
+  const sh = screen.height
+  const printWindow = window.open('', '_blank', `width=${sw},height=${sh},left=0,top=0`)
+  if (!printWindow) return
+  
+  printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+<title>Cierre - ${fecha}</title>
+<style>
+@page { size: 80mm auto; margin: 0; }
+body {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  line-height: 1.3;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  color: #000;
+  background: #fff;
+}
+pre {
+  margin: 2mm;
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: inherit;
+}
+</style>
+</head>
+<body>
+<pre>${lines.join('\n')}</pre>
+<script>
+window.onload = function() {
+  window.print();
+  setTimeout(function() { window.close(); }, 500);
+};
+<\/script>
+</body>
+</html>`)
+  printWindow.document.close()
 }
 
 onMounted(async () => {

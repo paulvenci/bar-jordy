@@ -23,7 +23,8 @@ export const formatDateTime = (date: Date | string): string => {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        timeZone: 'America/Santiago' // Zona horaria de Chile (UTC-3/-4)
+        timeZone: 'America/Santiago', // Zona horaria de Chile (UTC-3/-4)
+        hour12: false
     }).format(new Date(date))
 }
 

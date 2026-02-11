@@ -4,7 +4,7 @@
       <!-- Header -->
       <div class="flex justify-between items-center mb-6">
         <div>
-          <h1 class="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+          <h1 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
             🍽️ Gestión de Mesas
           </h1>
           <p class="text-gray-500 dark:text-gray-400 mt-1">Selecciona una mesa para tomar pedido</p>

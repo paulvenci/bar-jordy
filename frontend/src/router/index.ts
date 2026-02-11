@@ -11,6 +11,7 @@ import Tables from '../views/Tables.vue'
 import Reports from '../views/Reports.vue'
 import Settings from '../views/Settings.vue'
 import Login from '../views/Login.vue'
+import Help from '../views/Help.vue'
 
 // Extender RouteMeta para incluir permisos
 declare module 'vue-router' {
@@ -91,6 +92,16 @@ const router = createRouter({
             }
         },
         {
+            path: '/cierre-caja',
+            name: 'cierre-caja',
+            component: () => import('../views/CloseRegister.vue'),
+            meta: {
+                title: 'Cierre de Caja',
+                requiresAuth: true,
+                requiresPermission: 'reportes.ver'
+            }
+        },
+        {
             path: '/configuracion',
             name: 'configuracion',
             component: Settings,
@@ -98,6 +109,15 @@ const router = createRouter({
                 title: 'Configuración',
                 requiresAuth: true,
                 requiresPermission: 'config.ver'
+            }
+        },
+        {
+            path: '/ayuda',
+            name: 'ayuda',
+            component: Help,
+            meta: {
+                title: 'Centro de Ayuda',
+                requiresAuth: true
             }
         }
     ]
@@ -111,7 +131,10 @@ router.beforeEach(async (to, from, next) => {
     const { useConfiguracionStore } = await import('@/stores/configuracion')
     const configStore = useConfiguracionStore()
     const businessName = configStore.nombreNegocio || 'POS System'
-    document.title = to.meta.title ? `${to.meta.title} | ${businessName}` : businessName
+    const systemName = 'GestorBar'
+    const appTitle = `${systemName} - ${businessName}`
+
+    document.title = to.meta.title ? `${to.meta.title} | ${appTitle}` : appTitle
 
     // Si va al login y ya está autenticado, redirigir al dashboard
     if (to.path === '/login' && authStore.isAuthenticated) {

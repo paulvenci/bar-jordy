@@ -8,9 +8,9 @@
       @product-not-found="handleBarcodeError"
     />
 
-    <div class="h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-4 max-w-7xl mx-auto overflow-hidden">
+    <div class="h-[calc(100vh-4rem)] md:h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-1 md:gap-4 max-w-7xl mx-auto overflow-hidden">
       <!-- Left Panel: Products -->
-      <div class="flex-1 min-w-0 h-1/2 md:h-full overflow-auto">
+      <div class="flex-1 min-w-0 h-[35%] md:h-full overflow-auto">
          <ProductGrid 
             :products="productos"
             :categories="categorias"
@@ -20,18 +20,30 @@
       </div>
 
       <!-- Right Panel: Cart -->
-      <div class="w-full md:w-96 h-1/2 md:h-full flex-shrink-0 flex flex-col">
+      <div class="w-full md:w-[420px] h-[65%] md:h-full flex-shrink-0 flex flex-col">
           <!-- Table/Client Header -->
-          <div v-if="posStore.activeTableId" class="bg-blue-50 border-b border-blue-100 p-3 shrink-0">
-             <div class="flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                   <span class="bg-blue-600 text-white rounded-md px-2 py-1 text-sm font-bold">Mesa {{ posStore.activeTableNumber }}</span>
-                   <span v-if="posStore.activeClientName" class="bg-green-100 text-green-700 rounded-md px-2 py-1 text-sm font-medium">
-                     👤 {{ posStore.activeClientName }}
-                   </span>
-                   <span class="text-xs text-blue-600" v-if="cart.length > 0">({{ cart.length }} items)</span>
+          <div v-if="posStore.activeTableId" class="bg-blue-50 border-b border-blue-100 p-2 md:p-3 shrink-0">
+             <div class="flex justify-between items-center gap-2">
+                <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 flex-1 min-w-0">
+                   <div class="flex items-center gap-2">
+                       <span class="bg-blue-600 text-white rounded-md px-2 py-0.5 md:px-2 md:py-1 text-xs md:text-sm font-bold whitespace-nowrap shadow-sm">
+                          Mesa {{ posStore.activeTableNumber }}
+                       </span>
+                       <span class="text-[10px] md:text-xs text-blue-600 font-bold" v-if="cart.length > 0">
+                          ({{ cart.length }} items)
+                       </span>
+                   </div>
+                   
+                   <div v-if="posStore.activeClientName" class="flex items-center gap-1.5 text-green-800 bg-green-100 rounded-md px-2 py-1 truncate max-w-full md:max-w-[200px] border border-green-200">
+                     <span class="text-xs">👤</span>
+                     <span class="text-xs md:text-sm font-bold truncate">{{ posStore.activeClientName }}</span>
+                   </div>
                 </div>
-                <button @click="router.push('/mesas')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                
+                <button 
+                  @click="router.push('/mesas')" 
+                  class="text-xs md:text-sm text-gray-500 hover:text-gray-900 underline whitespace-nowrap shrink-0 transition-colors px-2 py-1"
+                >
                    Volver
                 </button>
              </div>
@@ -49,18 +61,18 @@
          </div>
 
          <!-- Table Actions -->
-         <div v-if="posStore.activeTableId" class="p-3 bg-white border-t border-gray-100 shrink-0 grid grid-cols-1 gap-2">
+         <div v-if="posStore.activeTableId" class="p-2 md:p-3 bg-white border-t border-gray-100 shrink-0 grid grid-cols-2 md:grid-cols-1 gap-1.5 md:gap-2">
              <button 
                 @click="handleParkOrder" 
                 :disabled="cart.length === 0 || processingSale"
-                class="w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                <span>📌</span> Guardar Comanda
+                class="w-full py-2 md:py-3 px-3 md:px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-base">
+                <span>📌</span> Guardar
              </button>
              <button 
                 @click="handleCancelTable" 
                 :disabled="processingSale"
-                class="w-full py-2 px-4 bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm">
-                <span>🚫</span> Liberar Mesa
+                class="w-full py-2 px-3 md:px-4 bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm">
+                <span>🚫</span> Liberar
              </button>
           </div>
       </div>

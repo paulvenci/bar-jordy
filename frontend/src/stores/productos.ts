@@ -176,13 +176,16 @@ export const useProductosStore = defineStore('productos', {
 
         async deleteProducto(id: string) {
             try {
+                // Cambiamos DELETE por UPDATE para Soft Delete, ya que el producto puede tener ventas asociadas
                 const { error } = await supabase
                     .from('productos')
-                    .delete()
+                    .update({ activo: false })
                     .eq('id', id)
 
                 if (error) throw error
 
+                // Eliminar de la lista local (el getter productosActivos se encarga de filtrar si es necesario, 
+                // pero fetchProductos solo trae los activos: true, así que lo quitamos de memoria)
                 this.productos = this.productos.filter(p => p.id !== id)
 
                 return { success: true }

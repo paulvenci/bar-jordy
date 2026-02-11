@@ -3,7 +3,7 @@
     <!-- Header with filters -->
     <div class="flex flex-wrap items-center justify-between gap-4">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-        📋 Historial de Ventas Detallado
+        📋 Ventas del Día
       </h3>
       <div class="flex items-center gap-3">
         <!-- Date range -->
@@ -33,9 +33,9 @@
       </div>
     </div>
 
-    <!-- Search -->
-    <div class="flex items-center gap-4">
-      <div class="relative flex-1">
+    <!-- Search and Filter -->
+    <div class="flex flex-wrap items-center gap-4">
+      <div class="relative flex-1 min-w-[200px]">
         <input
           v-model="busqueda"
           type="text"
@@ -51,6 +51,14 @@
           ✕
         </button>
       </div>
+      <select 
+        v-model="filtroEstado"
+        class="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white"
+      >
+        <option value="todas">Todas</option>
+        <option value="COMPLETADA">Completadas</option>
+        <option value="ANULADA">Anuladas</option>
+      </select>
       <span class="text-sm text-gray-500">
         {{ ventasFiltradas.length }} ventas | Total: {{ formatCurrency(totalFiltrado) }}
       </span>
@@ -79,7 +87,6 @@
             >
               Fecha {{ campoOrden === 'fecha' ? (ordenAsc ? '↑' : '↓') : '' }}
             </th>
-
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
               Vendedor
             </th>
@@ -95,12 +102,18 @@
             >
               Total {{ campoOrden === 'total' ? (ordenAsc ? '↑' : '↓') : '' }}
             </th>
+            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+              Estado
+            </th>
+            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+              Acciones
+            </th>
           </tr>
         </thead>
         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
           <template v-if="ventasOrdenadas.length === 0">
             <tr>
-              <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+              <td colspan="9" class="px-4 py-8 text-center text-gray-500">
                 No hay ventas en el período seleccionado
               </td>
             </tr>
@@ -110,10 +123,13 @@
             <tr 
               @click="toggleExpand(venta.id)"
               class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              :class="{ 'bg-primary-50 dark:bg-primary-900/20': expandedId === venta.id }"
+              :class="[
+                expandedId === venta.id ? 'bg-primary-50 dark:bg-primary-900/20' : '',
+                venta.estado === 'ANULADA' ? 'opacity-50' : ''
+              ]"
             >
               <td class="px-2 py-3 text-center">
-                <span class="text-gray-400 transition-transform" :class="{ 'rotate-90': expandedId === venta.id }">
+                <span class="text-gray-400 transition-transform inline-block" :class="{ 'rotate-90': expandedId === venta.id }">
                   ▶
                 </span>
               </td>
@@ -123,7 +139,6 @@
               <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
                 {{ formatFecha(venta.fecha) }}
               </td>
-
               <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">
                 {{ venta.vendedor?.nombre || '-' }}
               </td>
@@ -141,10 +156,34 @@
               <td class="px-4 py-3 text-sm text-right font-bold text-gray-900 dark:text-white">
                 {{ formatCurrency(venta.total) }}
               </td>
+              <td class="px-4 py-3 text-center">
+                <span 
+                  class="px-2 py-0.5 text-xs font-medium rounded-full"
+                  :class="getEstadoClass(venta.estado)"
+                >
+                  {{ venta.estado }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-right" @click.stop>
+                <button 
+                  v-if="venta.estado === 'COMPLETADA'"
+                  @click="abrirModalAnular(venta)"
+                  class="text-red-600 hover:text-red-800 dark:text-red-400 text-sm font-medium"
+                >
+                  Anular
+                </button>
+                <span 
+                  v-else-if="venta.estado === 'ANULADA'"
+                  class="text-xs text-gray-400 cursor-help"
+                  :title="`Motivo: ${venta.motivo_anulacion || 'No especificado'}`"
+                >
+                  Ver motivo
+                </span>
+              </td>
             </tr>
             <!-- Expanded detail row -->
             <tr v-if="expandedId === venta.id" class="bg-gray-50 dark:bg-gray-700/50">
-              <td colspan="8" class="px-6 py-4">
+              <td colspan="9" class="px-6 py-4">
                 <div class="ml-6">
                   <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     📦 Productos de la venta #{{ venta.numero }}
@@ -203,6 +242,14 @@
         </button>
       </div>
     </div>
+
+    <!-- Modal de Anulación -->
+    <AnularVentaModal 
+      v-if="ventaAAnular"
+      :venta="(ventaAAnular as any)"
+      @close="ventaAAnular = null"
+      @anulada="handleVentaAnulada"
+    />
   </div>
 </template>
 
@@ -210,6 +257,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { supabase } from '@/lib/supabase'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
+import AnularVentaModal from '@/components/modules/pos/AnularVentaModal.vue'
 
 interface ItemVenta {
   id: string
@@ -226,6 +274,8 @@ interface Venta {
   total: number
   cliente_nombre: string | null
   metodo_pago: string | null
+  estado: string
+  motivo_anulacion: string | null
   vendedor?: { nombre: string } | null
   items: ItemVenta[]
 }
@@ -234,20 +284,19 @@ interface Venta {
 const ventas = ref<Venta[]>([])
 const loading = ref(false)
 const busqueda = ref('')
+const filtroEstado = ref('todas')
 const fechaInicio = ref('')
 const fechaFin = ref('')
 const expandedId = ref<string | null>(null)
 const campoOrden = ref<'numero' | 'fecha' | 'total'>('fecha')
 const ordenAsc = ref(false)
 const paginaActual = ref(1)
-const itemsPorPagina = 20
+const itemsPorPagina = 30
+const ventaAAnular = ref<Venta | null>(null)
 
-// Initialize dates (last 7 days)
+// Initialize dates to today
 const initDates = () => {
   const hoy = new Date()
-  const hace7Dias = new Date()
-  hace7Dias.setDate(hoy.getDate() - 7)
-  
   const formatDate = (d: Date) => {
     const year = d.getFullYear()
     const month = String(d.getMonth() + 1).padStart(2, '0')
@@ -256,20 +305,30 @@ const initDates = () => {
   }
   
   fechaFin.value = formatDate(hoy)
-  fechaInicio.value = formatDate(hace7Dias)
+  fechaInicio.value = formatDate(hoy)
 }
 
 // Computed
 const ventasFiltradas = computed(() => {
-  if (!busqueda.value) return ventas.value
-  const query = busqueda.value.toLowerCase()
-  return ventas.value.filter(v => 
-    v.numero.toString().includes(query) ||
-    (v.cliente_nombre && v.cliente_nombre.toLowerCase().includes(query)) ||
-    (v.vendedor?.nombre && v.vendedor.nombre.toLowerCase().includes(query)) ||
-    // Buscar en productos de la venta
-    v.items?.some(item => item.nombre_producto.toLowerCase().includes(query))
-  )
+  let result = [...ventas.value]
+  
+  // Filter by search
+  if (busqueda.value) {
+    const query = busqueda.value.toLowerCase()
+    result = result.filter(v => 
+      v.numero.toString().includes(query) ||
+      (v.cliente_nombre && v.cliente_nombre.toLowerCase().includes(query)) ||
+      (v.vendedor?.nombre && v.vendedor.nombre.toLowerCase().includes(query)) ||
+      v.items?.some(item => item.nombre_producto.toLowerCase().includes(query))
+    )
+  }
+  
+  // Filter by estado
+  if (filtroEstado.value !== 'todas') {
+    result = result.filter(v => v.estado === filtroEstado.value)
+  }
+  
+  return result
 })
 
 const ventasOrdenadas = computed(() => {
@@ -287,7 +346,9 @@ const ventasOrdenadas = computed(() => {
 })
 
 const totalFiltrado = computed(() => 
-  ventasFiltradas.value.reduce((sum, v) => sum + v.total, 0)
+  ventasFiltradas.value
+    .filter(v => v.estado === 'COMPLETADA')
+    .reduce((sum, v) => sum + v.total, 0)
 )
 
 const totalPaginas = computed(() => 
@@ -305,6 +366,15 @@ const getMetodoPagoClass = (metodo: string | null) => {
     case 'TARJETA': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
     case 'TRANSFERENCIA': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
     case 'CREDITO': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+    default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+  }
+}
+
+const getEstadoClass = (estado: string) => {
+  switch (estado) {
+    case 'COMPLETADA': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+    case 'ANULADA': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+    case 'PENDIENTE': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
     default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
   }
 }
@@ -334,6 +404,15 @@ const toggleExpand = (id: string) => {
   expandedId.value = expandedId.value === id ? null : id
 }
 
+const abrirModalAnular = (venta: Venta) => {
+  ventaAAnular.value = venta
+}
+
+const handleVentaAnulada = () => {
+  ventaAAnular.value = null
+  cargarVentas()
+}
+
 const cargarVentas = async () => {
   if (!fechaInicio.value || !fechaFin.value) return
   
@@ -341,19 +420,27 @@ const cargarVentas = async () => {
   expandedId.value = null
   
   try {
-    const startDate = `${fechaInicio.value}T00:00:00`
-    const endDate = `${fechaFin.value}T23:59:59`
+    // Convert local date boundaries to "Business Day" (06:00 AM to 05:59 AM next day)
+    // This prevents sales from 00:00-06:00 (previous night shift) from appearing in today's list
+    const localStart = new Date(`${fechaInicio.value}T06:00:00`)
+    
+    // For end date, we add 1 day and set to 05:59:59
+    const localEnd = new Date(`${fechaFin.value}T05:59:59`)
+    localEnd.setDate(localEnd.getDate() + 1)
+    
+    const startDate = localStart.toISOString()
+    const endDate = localEnd.toISOString()
     
     const { data, error } = await supabase
       .from('ventas')
       .select(`
-        id, numero, fecha, total, cliente_nombre, metodo_pago,
+        id, numero, fecha, total, cliente_nombre, metodo_pago, estado, motivo_anulacion,
         vendedor:usuarios!ventas_vendedor_id_fkey(nombre),
         items:items_venta(id, nombre_producto, cantidad, precio_unitario, subtotal)
       `)
       .gte('fecha', startDate)
       .lte('fecha', endDate)
-      .eq('estado', 'COMPLETADA')
+      .in('estado', ['COMPLETADA', 'ANULADA'])
       .order('fecha', { ascending: false })
 
     if (error) throw error

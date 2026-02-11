@@ -1,14 +1,14 @@
 <template>
   <div class="h-full flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
     <!-- Header: Search & Filter -->
-    <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-      <div class="flex gap-2 mb-3">
+    <div class="p-2 md:p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+      <div class="flex gap-2 mb-2 md:mb-3">
         <div class="relative flex-1">
           <input 
             v-model="searchQuery"
             type="text" 
             placeholder="Buscar producto (nombre o código)..." 
-            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2 pr-10 border"
+            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-1.5 md:p-2 pr-10 border text-sm"
             autofocus
           />
           <button 
@@ -24,10 +24,10 @@
       </div>
       
       <!-- Category Chips -->
-      <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+      <div class="flex gap-1.5 md:gap-2 overflow-x-auto pb-1 md:pb-2 scrollbar-hide">
         <button 
           @click="selectedCategory = ''"
-          class="px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
+          class="px-2 py-0.5 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-medium whitespace-nowrap transition-colors"
           :class="selectedCategory === '' 
             ? 'bg-primary-600 text-white' 
             : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'"
@@ -38,7 +38,7 @@
           v-for="cat in categories" 
           :key="cat.id"
           @click="selectedCategory = cat.id"
-          class="px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
+          class="px-2 py-0.5 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-medium whitespace-nowrap transition-colors"
           :class="selectedCategory === cat.id 
             ? 'bg-primary-600 text-white' 
             : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'"
@@ -49,7 +49,7 @@
     </div>
 
     <!-- Product Grid -->
-    <div class="flex-1 overflow-y-auto p-4 bg-gray-100 dark:bg-gray-900/50">
+    <div class="flex-1 overflow-y-auto p-2 md:p-4 bg-gray-100 dark:bg-gray-900/50">
       <div v-if="loading" class="text-center py-10">
         <p class="text-gray-500">Cargando productos...</p>
       </div>
@@ -58,15 +58,15 @@
         <p class="text-gray-500">No se encontraron productos.</p>
       </div>
       
-      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div v-else class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-1.5 md:gap-3">
         <div 
           v-for="product in filteredProducts" 
           :key="product.id"
           @click="$emit('add-to-cart', product)"
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md cursor-pointer transition-all border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-48 active:scale-95"
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md cursor-pointer transition-all border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-24 md:h-48 active:scale-95"
         >
           <!-- Product Content -->
-          <div class="h-24 w-full relative overflow-hidden bg-gray-100 dark:bg-gray-700">
+          <div class="h-24 w-full relative overflow-hidden bg-gray-100 dark:bg-gray-700 hidden md:block">
             <img 
               v-if="product.foto" 
               :src="product.foto" 
@@ -88,12 +88,12 @@
             </div>
           </div>
 
-          <div class="p-2 flex flex-col justify-between flex-1">
+          <div class="p-1.5 md:p-2 flex flex-col justify-between flex-1">
             <div>
-              <h4 class="font-bold text-gray-900 dark:text-white text-xs line-clamp-2 leading-tight h-8">
+              <h4 class="font-bold text-gray-900 dark:text-white text-[10px] md:text-xs line-clamp-2 leading-tight">
                 {{ product.nombre }}
               </h4>
-              <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
+              <p class="text-[9px] md:text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 hidden md:block">
                 Stock: 
                 <span :class="calculateProductStock(product) <= product.stock_minimo ? 'text-red-500 font-bold' : ''">
                   {{ calculateProductStock(product) }}
@@ -101,8 +101,8 @@
                 </span>
               </p>
             </div>
-            <div class="text-right mt-1">
-              <span class="text-primary-600 dark:text-primary-400 font-bold text-sm">
+            <div class="text-right mt-0.5 md:mt-1">
+              <span class="text-primary-600 dark:text-primary-400 font-bold text-[11px] md:text-sm">
                 ${{ formatNumber(product.valor_venta) }}
               </span>
             </div>

@@ -277,15 +277,15 @@ const cargarVentas = async () => {
   loading.value = true
   
   try {
-    // Usar formato local YYYY-MM-DD para evitar problemas de zona horaria
+    // Convert local date boundaries to UTC for Supabase
     const hoy = new Date()
     const year = hoy.getFullYear()
     const month = String(hoy.getMonth() + 1).padStart(2, '0')
     const day = String(hoy.getDate()).padStart(2, '0')
     const todayStr = `${year}-${month}-${day}`
     
-    const startOfDay = `${todayStr}T00:00:00`
-    const endOfDay = `${todayStr}T23:59:59`
+    const startOfDay = new Date(`${todayStr}T00:00:00`).toISOString()
+    const endOfDay = new Date(`${todayStr}T23:59:59`).toISOString()
     
     const { data, error } = await supabase
       .from('ventas')

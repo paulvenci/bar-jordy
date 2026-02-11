@@ -64,11 +64,7 @@ body {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 2.5em;
-  line-height: 1.1;
-  font-weight: 700;
-}
+
 
 button {
   border-radius: 8px;
@@ -88,4 +84,307 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-dark {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Page Transitions */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Modern Card Hover */
+.premium-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+}
+
+/* Animation Utilities */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.slide-in-from-bottom-4 {
+  animation: slide-in-from-bottom 0.6s cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ============================================
+   THERMAL PRINTER STYLES (80mm)
+   ============================================ */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 2mm;
+  }
+
+  /* Reset everything for thermal */
+  * {
+    color: #000 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Hide all UI chrome */
+  aside,
+  header,
+  nav,
+  .no-print,
+  [class*="animate-spin"] {
+    display: none !important;
+  }
+
+  /* Hide all buttons */
+  button {
+    display: none !important;
+  }
+
+  /* Reset layout - remove sidebar margin */
+  main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  body,
+  html {
+    width: 80mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: 'Courier New', monospace !important;
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Container overrides */
+  .max-w-7xl,
+  .max-w-4xl,
+  div[class*="max-w-"] {
+    max-width: 100% !important;
+    padding: 0 2px !important;
+    margin: 0 !important;
+  }
+
+  /* Force single column grids */
+  .grid {
+    display: block !important;
+  }
+
+  .grid>div {
+    margin-bottom: 2px !important;
+    padding: 2px 0 !important;
+  }
+
+  /* Spacing reductions for thermal */
+  .space-y-6>*+* {
+    margin-top: 4px !important;
+  }
+
+  .space-y-4>*+* {
+    margin-top: 3px !important;
+  }
+
+  .space-y-3>*+* {
+    margin-top: 2px !important;
+  }
+
+  .mb-4,
+  .mb-3,
+  .mb-6,
+  .mb-8 {
+    margin-bottom: 3px !important;
+  }
+
+  .p-6,
+  .p-4 {
+    padding: 3px !important;
+  }
+
+  .p-3 {
+    padding: 2px !important;
+  }
+
+  .gap-4,
+  .gap-3,
+  .gap-2 {
+    gap: 1px !important;
+  }
+
+  .pt-20 {
+    padding-top: 0 !important;
+  }
+
+  /* Typography for thermal */
+  h1,
+  h2,
+  h3 {
+    font-size: 13px !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    border-bottom: 1px dashed #000 !important;
+    padding-bottom: 3px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .text-3xl {
+    font-size: 14px !important;
+  }
+
+  .text-2xl,
+  .text-xl {
+    font-size: 12px !important;
+  }
+
+  .text-lg {
+    font-size: 11px !important;
+  }
+
+  .text-sm,
+  .text-xs {
+    font-size: 10px !important;
+  }
+
+  /* Card borders for readability */
+  .rounded-lg,
+  .rounded-xl,
+  .rounded-2xl {
+    border-radius: 0 !important;
+    border: 1px solid #000 !important;
+    padding: 3px !important;
+    margin-bottom: 3px !important;
+  }
+
+  /* Dashed separators */
+  .border-t {
+    border-top: 1px dashed #000 !important;
+  }
+
+  /* Badges */
+  .rounded-full {
+    border-radius: 0 !important;
+    border: 1px solid #000 !important;
+    padding: 0 3px !important;
+    font-size: 9px !important;
+  }
+
+  /* Keep key-value pairs inline */
+  .flex.justify-between {
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  /* Consolidado gradient section */
+  [class*="bg-gradient"] {
+    border: 2px solid #000 !important;
+    padding: 4px !important;
+  }
+
+  [class*="bg-white/10"] {
+    border-bottom: 1px dotted #000 !important;
+    padding: 2px 0 !important;
+  }
+
+  /* Total recaudado emphasis */
+  .text-3xl.font-bold {
+    font-size: 16px !important;
+    text-align: right !important;
+    border-top: 2px solid #000 !important;
+    padding-top: 4px !important;
+    margin-top: 3px !important;
+  }
+
+  /* Colored text indicators - all black for thermal */
+  [class*="text-green-"],
+  [class*="text-blue-"],
+  [class*="text-purple-"],
+  [class*="text-orange-"],
+  [class*="text-amber-"],
+  [class*="text-red-"],
+  [class*="text-primary-"] {
+    color: #000 !important;
+  }
+
+  /* Hide emoji icon next to page title */
+  .flex.items-center.gap-3>span.text-3xl {
+    display: none !important;
+  }
+
+  /* Hide the date selector background */
+  .bg-gray-50 {
+    border: none !important;
+    padding: 2px 0 !important;
+  }
+
+  /* Desglose sections */
+  [class*="bg-green-50"],
+  [class*="bg-amber-50"],
+  [class*="bg-green-900"],
+  [class*="bg-amber-900"] {
+    border: 1px solid #000 !important;
+    padding: 3px !important;
+  }
+
+  /* SVG icons - hide in print */
+  svg {
+    display: none !important;
+  }
+
+  /* Animate pulse dot - hide */
+  .animate-pulse {
+    display: none !important;
+  }
 }

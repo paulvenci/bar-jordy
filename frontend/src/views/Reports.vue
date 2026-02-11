@@ -1,7 +1,7 @@
 <template>
   <AppLayout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Reportes y Estadísticas</h1>
+      <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Reportes y Estadísticas</h1>
 
       <!-- Tabs Navigation -->
       <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
@@ -24,15 +24,7 @@
 
       <!-- Tab Content Placeholder -->
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 min-h-[400px]">
-        <div v-if="currentTab === 'ventas-hoy'">
-          <VentasHoyReport />
-        </div>
-        
-        <div v-else-if="currentTab === 'cierre-caja'">
-          <CashRegisterCloseReport />
-        </div>
-        
-        <div v-else-if="currentTab === 'historial'">
+        <div v-if="currentTab === 'historial'">
           <VentasHistorialTable />
         </div>
         
@@ -57,10 +49,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import AppLayout from '@/components/layout/AppLayout.vue'
-import VentasHoyReport from '@/components/reports/VentasHoyReport.vue'
-import CashRegisterCloseReport from '@/components/reports/CashRegisterCloseReport.vue'
 import VentasHistorialTable from '@/components/reports/VentasHistorialTable.vue'
 import SalesReport from '@/components/reports/SalesReport.vue'
 import TopProductsReport from '@/components/reports/TopProductsReport.vue'
@@ -68,16 +59,33 @@ import MonthlyComparisonReport from '@/components/reports/MonthlyComparisonRepor
 import StaleProductsReport from '@/components/reports/StaleProductsReport.vue'
 
 const tabs = [
-  { id: 'ventas-hoy', name: '📋 Ventas del Día' },
-  { id: 'cierre-caja', name: '💰 Cierre de Caja' },
-  { id: 'historial', name: '📜 Historial Detallado' },
+  { id: 'historial', name: '📋 Ventas' },
   { id: 'sales', name: '📊 Gráfico Ventas' },
   { id: 'top-products', name: 'Productos Top' },
   { id: 'comparison', name: 'Comparativa Mensual' },
   { id: 'stale', name: 'Sin Rotación' }
 ]
 
-const currentTab = ref('ventas-hoy')
+
+const route = useRoute()
+
+const currentTab = ref('historial')
+
+onMounted(() => {
+  if (route.query.tab) {
+    const tabId = route.query.tab as string
+    if (tabs.some(t => t.id === tabId)) {
+      currentTab.value = tabId
+    }
+  }
+})
+
+// Watch for route changes (e.g. clicking sidebar links while already on page)
+watch(() => route.query.tab, (newTab) => {
+  if (newTab && tabs.some(t => t.id === newTab)) {
+    currentTab.value = newTab as string
+  }
+})
 </script>
 
 
